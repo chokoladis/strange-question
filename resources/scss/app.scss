@@ -1,0 +1,17 @@
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+@font-face {
+    font-family: 'desirable';
+    src: url('../fonts/desirable-sans.ttf');
+}
+
+.navbar-brand{
+    font-family: 'desirable', 'Nunito', Arial, Helvetica, sans-serif;
+}
