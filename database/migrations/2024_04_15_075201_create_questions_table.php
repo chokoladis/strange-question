@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('user_id');
             $table->index('user_id', 'questions_user_idx');
             $table->foreign('user_id', 'questions_user_fk')->references('id')->on('users')->cascadeOnDelete();
 
             $table->string('title', 255);
             $table->index('title', 'questions_title_idx');
+            $table->string('code', 255)->unique();
             $table->boolean('active');
             
             $table->unsignedBigInteger('right_comment_id');

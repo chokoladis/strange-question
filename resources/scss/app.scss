@@ -11,7 +11,59 @@
     font-family: 'desirable';
     src: url('../fonts/desirable-sans.ttf');
 }
+@font-face {
+    font-family: 'waybuloo';
+    src: url('../fonts/Waybuloo\ Arial/WaybulooArial-Bold.ttf');
+}
+
+$pink : rgb(206, 56, 244);
 
 .navbar-brand{
     font-family: 'desirable', 'Nunito', Arial, Helvetica, sans-serif;
+}
+.btn-purple{
+    background: $pink;
+    color: white;
+
+    &:hover{
+        background: darken($pink, 10);
+        color: white;
+    }
+}
+
+.banner{
+    padding: 30px;
+    position: relative;
+    font-family: 'waybuloo', Arial, Helvetica, sans-serif;
+    z-index: 1;
+
+    img.bg{
+        position: absolute;
+        left: 0;
+        top: 0;
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    &.banner-centred{
+        text-align: center;
+    }
+    &.banner-1{
+        background: linear-gradient(160deg, rgb(186, 49, 255) , rgb(255, 187, 0));
+        color: white;
+
+        .btn{
+            &:active{
+                background: rgb(9, 100, 226);
+            }
+            
+        }
+    }
+    *{
+        z-index: 2;
+        position: relative;
+    }
+
 }

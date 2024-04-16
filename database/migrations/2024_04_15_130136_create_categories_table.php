@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('category_parent_id');
             $table->string('title');
-            $table->smallInteger('sort');
-            $table->boolean('active')->default(false)->nullable();
-            // $table->
-            // -img
+            $table->string('code')->unique();
+            $table->smallInteger('sort')->default(100)->nullable();
+            $table->boolean('active')->nullable();
             $table->timestamps();
         });
     }

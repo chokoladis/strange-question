@@ -76,6 +76,10 @@
         <main class="py-4">
             @yield('content')
         </main>
-    </div>
+
+        <footer>
+            <a target="_blank" href="https://icons8.com/icon/p4rXi9HURgXT/help">иконки</a> от <a target="_blank" href="https://icons8.com">Icons8</a>
+        </footer>
+    </div>    
 </body>
 </html>
