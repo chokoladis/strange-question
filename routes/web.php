@@ -13,10 +13,19 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['namespace' => 'App\Http\Controllers' ], function(){
 
-    Route::get('/questions', 'QuestionController@index')->name('question.index');
+    Route::get('/questions', 'QuestionController@index')->name('questions.index');
+    Route::get('/categories', 'CategoryController@index')->name('categories.index');
 
-    Route::middleware(['Authenticate'])->group(function(){
     // Route::middleware(['auth'])->group( function() {
+
+        Route::group(['prefix' => 'categories', 'controller' => 'CategoryController'], function(){
+
+            Route::name('category.')->group(function(){
+                Route::get('/{category}/', 'detail')->name('detail');
+                Route::get('/add', 'add')->name('add');
+                Route::post('/', 'store')->name('store');
+            });
+        }); 
 
         Route::group(['prefix' => 'questions', 'controller' => 'QuestionController'], function(){
 
@@ -26,7 +35,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
             });
         }); 
 
-    });
+    // });
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

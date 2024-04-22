@@ -2,27 +2,54 @@
 
 namespace App\Http\Controllers;
 
+// use Illuminate\Http\Request;
+use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Models\Question;
+use App\Services\FileService;
+use Illuminate\Http\JsonResponse;
 
 class QuestionController extends Controller
 {
-    // Question
-    public function index(){
 
+    public function index(){
+        $questions = Question::getActive();
+        return view('questions.index', compact('questions'));
     }
 
     public function add(){
 
-        $categories = Category::query()->where('active', true);
+        $categories = Category::getActive();
 
         return view('questions.add', compact('categories'));
     }
 
     public function store(StoreRequest $request){
 
-        // 'user_id' => user()->id
+
+        $data = $request->validated();
+        $data['user_id'] = 1; // заглушка
+
+        try {
+            if ($request->hasFile('img')){
+                $img = $request->file('img');
+                if ($img->isValid()){
+                    $img->store('questions');
+                    
+                    $res = FileService::save($img);
+                    $data['file_id'] = $res['id'];
+                } else {
+                    // return JsonResponse(['error' => 'Не валидный файл']);
+                }
+            }
+            unset($data['img']);
+            
+            $question = Question::firstOrCreate([
+                'title' => $data['title']
+            ],$data);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
 
     }
 }
