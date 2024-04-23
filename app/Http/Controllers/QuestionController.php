@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class QuestionController extends Controller
 {
@@ -33,10 +34,8 @@ class QuestionController extends Controller
         try {
             if ($request->hasFile('img')){
                 $img = $request->file('img');
-                if ($img->isValid()){
-                    $img->store('questions');
-                    
-                    $res = FileService::save($img);
+                if ($img->isValid()){                    
+                    $res = FileService::save($img,'questions');
                     $data['file_id'] = $res['id'];
                 } else {
                     // return JsonResponse(['error' => 'Не валидный файл']);
@@ -50,6 +49,10 @@ class QuestionController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
 
+    public function detail($question){
+        $question = Question::getElement($question);
+        return view('questions.detail', compact('question'));
     }
 }

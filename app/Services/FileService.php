@@ -10,20 +10,38 @@ class FileService {
     const MAX_FILE_SIZE = 3150000;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
 
-    public static function save(UploadedFile $img){
+    public static function save(UploadedFile $img, $mainDir = 'main'){
         
-        $path = $img->path();
-        $ext = $img->extension();
-        $name = $img->hashName();
+        $root = public_path() . '/storage/' . $mainDir;
 
-        $data = [
-            'name' => $name,
-            'expansion' => $ext,
-            'path' => $path, 
-        ];
-        // dd($data);
-
-        $file = File::create($data);
+        $subDir = substr($img->hashName(), 0, 3 );
+        
+        try {
+            if (!is_dir($root)){
+                mkdir($root, 755);
+            }
+    
+            $folder = $root.'/'.$subDir.'/';
+            if (!is_dir($folder)){
+                mkdir($folder, 755);
+            }
+            
+            $ext = $img->extension();
+            $name = $img->hashName();
+            $filePath = $subDir.'/'.$img->hashName();
+    
+            $img->move($folder, $img->hashName());        
+    
+            $data = [
+                'name' => $name,
+                'expansion' => $ext,
+                'path' => $filePath, 
+            ];
+    
+            $file = File::create($data);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
 
         return $file;
     }

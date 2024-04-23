@@ -25,7 +25,7 @@ return new class extends Migration
             
             $table->unsignedBigInteger('right_comment_id')->default(null);
             $table->index('right_comment_id', 'questions_right_comment_idx');
-            $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();
+            $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();            
 
             $table->timestamps();
         });

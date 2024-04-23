@@ -30,6 +30,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
         Route::group(['prefix' => 'questions', 'controller' => 'QuestionController'], function(){
 
             Route::name('question.')->group(function(){
+                Route::get('/{question}/', 'detail')->name('detail');
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
             });

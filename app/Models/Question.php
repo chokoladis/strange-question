@@ -15,20 +15,26 @@ class Question extends Model
 
     public $guarded = [];
 
+    public static function getElement($code){
+        // use cache 
+        return Question::where('code', $code)->where('active', true)->first();
+    }
+
     public static function getActive(){
         //cache
         return Question::query()->where('active', true)->get();
     }
     
+    // 
     public function category() : HasOne {
         return $this->hasOne(Category::class);
     }
 
     public function file() : HasOne {
-        return $this->hasOne(File::class);
+        return $this->hasOne(File::class, 'question_id', 'id');
     }
 
-
+    // 
     public static function boot() {
 
         parent::boot();
@@ -40,6 +46,10 @@ class Question extends Model
          */
         static::creating(function($item) {
             $item->code = Str::slug(Str::lower($item->title),'-');
+        });
+
+        static::created(function($item) {
+            File::find($item->file_id)->update(['question_id' => $item->id]);
         });
 
     }
