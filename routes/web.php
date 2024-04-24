@@ -21,7 +21,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
         Route::group(['prefix' => 'categories', 'controller' => 'CategoryController'], function(){
 
             Route::name('category.')->group(function(){
-                Route::get('/{category}/', 'detail')->name('detail');
+                Route::get('/detail/{category}/', 'detail')->name('detail');
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
             });
@@ -30,7 +30,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
         Route::group(['prefix' => 'questions', 'controller' => 'QuestionController'], function(){
 
             Route::name('question.')->group(function(){
-                Route::get('/{question}/', 'detail')->name('detail');
+                Route::get('/detail/{question}/', 'detail')->name('detail');
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
             });

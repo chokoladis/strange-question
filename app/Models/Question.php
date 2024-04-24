@@ -24,7 +24,16 @@ class Question extends Model
         //cache
         return Question::query()->where('active', true)->get();
     }
-    
+    public static function getTopPopular(){
+        //cache
+        return Question::query()
+            ->where('active', true)
+            ->join('question_statistics', 'questions.id', '=', 'question_statistics.question_id')
+            ->orderBy('question_statistics.views', 'desc')
+            ->limit(10)
+            ->get();
+    }
+
     // 
     public function category() : HasOne {
         return $this->hasOne(Category::class);
@@ -50,6 +59,9 @@ class Question extends Model
 
         static::created(function($item) {
             File::find($item->file_id)->update(['question_id' => $item->id]);
+            QuestionStatistics::create([
+                'question_id' => $item->id
+            ]);
         });
 
     }

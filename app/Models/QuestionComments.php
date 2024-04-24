@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class QuestionComments extends Model
 {
     use HasFactory;
+    public $guarded = [];
 }
