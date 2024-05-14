@@ -1,12 +1,18 @@
 @extends('layouts.app')
 
+@push('script')
+    @vite(['resources/js/question.js'])
+@endpush
+
 @section('content')
     <div class="container">
         <form action="{{ route('question.store') }}" method="POST" enctype="multipart/form-data">
 
+            <h1>Мой вопрос - <b>...</b></h1>
+
             @csrf
 
-            <div class="mb-3">
+            <div class="mt-5 mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.category') }}</label>
                 <select name="category" class="form-select">
                     @foreach ($categories as $category)
@@ -34,7 +40,6 @@
             </div>
             
             <button type="submit" class="btn btn-primary mb-3">{{ __('system.add') }}</button>
-            
         
         </form>
     </div>

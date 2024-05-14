@@ -25,7 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ]       
+            'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ]
         ];
     }
 

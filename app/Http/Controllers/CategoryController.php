@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Category\StoreRequest;
 use App\Models\Category;
+use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse as HttpFoundationJsonResponse;
@@ -31,8 +32,24 @@ class CategoryController extends Controller
     public function store(StoreRequest $request){
 
         $data = $request->validated();
-        
-        $category = Category::firstOrCreate($data);
+
+        try {
+            if ($request->hasFile('img')){
+                $img = $request->file('img');
+                if ($img->isValid()){                    
+                    $res = FileService::save($img,'categories');
+                    $data['file_id'] = $res['id'];
+                } else {
+                    // return JsonResponse(['error' => 'Не валидный файл']);
+                }
+            }
+            unset($data['img']);
+            
+            $category = Category::firstOrCreate([ 'title' => $data['title'] ],$data);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        dd($data);
 
         // ['result' => $category]
         // return HttpFoundationJsonResponse()-;

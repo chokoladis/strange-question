@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -24,6 +25,7 @@ class Question extends Model
         //cache
         return Question::query()->where('active', true)->get();
     }
+    
     public static function getTopPopular(){
         //cache
         return Question::query()
@@ -34,9 +36,23 @@ class Question extends Model
             ->get();
     }
 
+    public function getCurrentUserComment(){
+        $res = null;
+
+        if (!empty($this->question_comment->toArray()))
+            $res = $this->question_comment?->comment;
+        // add check current user
+        
+        return $res;
+    }
+
     // 
     public function category() : HasOne {
         return $this->hasOne(Category::class);
+    }
+
+    public function question_comment() : HasMany {
+        return $this->HasMany(QuestionComments::class, 'question_id', 'id');
     }
 
     public function file() : HasOne {

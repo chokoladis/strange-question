@@ -34,11 +34,12 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('questions.index') }}">{{ __('Вопросы') }}</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('categories.index') }}">{{ __('Категории') }}</a>
+                            </li>
                         </ul>
 
-                        <!-- Right Side Of Navbar -->
                         <ul class="navbar-nav ms-auto">
-                            <!-- Authentication Links -->
                             @guest
                                 @if (Route::has('login'))
                                     <li class="nav-item">
@@ -70,6 +71,11 @@
                                     </div>
                                 </li>
                             @endguest
+                            <li class="nav-item">
+                                <a class="js-change-theme" data-theme="dark">
+                                    <img src="{{ Storage::url('main/moon.png') }}" alt="">                                    
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

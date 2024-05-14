@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Category;
 
+use Illuminate\Validation\Rules\File;
+use App\Services\FileService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -22,8 +24,9 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_parent_id' => 'int',
+            'category_parent_id' => 'int|nullable',
             'title' => 'required|string',
+            'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ],
             'sort' => 'int|nullable'
         ];
     }
