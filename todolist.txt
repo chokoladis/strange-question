@@ -8,7 +8,6 @@
 
 сделать
 
-слайдер наиболее популярных вопросов
 category_id - question_id
 file_id - question_id
 3 выпадающих списка (category) с динамическими данными

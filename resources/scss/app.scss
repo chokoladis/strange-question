@@ -45,6 +45,20 @@ nav{
         }
     }
 }
+.slide{
+
+    .bg {
+        
+        img{
+            object-fit: contain; 
+            height: 100%;
+        }
+    }
+    .main{
+        background: white;
+        color: black;
+    }
+}
 
 footer{
     padding: 50px 0;

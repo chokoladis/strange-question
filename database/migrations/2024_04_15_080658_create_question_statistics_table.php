@@ -18,7 +18,7 @@ return new class extends Migration
             $table->index('question_id', 'question_statistics_question_idx');
             $table->foreign('question_id', 'question_statistics_question_fk')->references('id')->on('questions')->cascadeOnDelete();
             
-            $table->bigInteger('views');
+            $table->bigInteger('views')->default(0);
 
             $table->timestamps();
         });
