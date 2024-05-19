@@ -18,7 +18,7 @@
     </head>
     <body>
         <div id="app">
-            <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <nav class="header navbar navbar-expand-md navbar-light bg-white shadow-sm">
                 <div class="container">
                     <a class="navbar-brand" href="{{ url('/') }}">
                         {{ config('app.logo') }} 
@@ -72,9 +72,12 @@
                                 </li>
                             @endguest
                             <li class="nav-item">
-                                <a class="js-change-theme" data-theme="dark">
-                                    <img src="{{ Storage::url('main/moon.png') }}" alt="">                                    
-                                </a>
+                                <div class="js-change-theme" data-theme="dark">
+                                    <div class="img">
+                                        <img src="{{ Storage::url('main/moon.png') }}" alt="">
+                                        <img src="{{ Storage::url('main/sun.png') }}" alt="">
+                                    </div>
+                                </div>
                             </li>
                         </ul>
                     </div>

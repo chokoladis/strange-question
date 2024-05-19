@@ -18,6 +18,10 @@
 
 $pink : rgb(206, 56, 244);
 
+*, *:hover{
+    transition: .3s;
+}
+
 .navbar-brand{
     font-family: 'desirable', 'Nunito', Arial, Helvetica, sans-serif;
 }
@@ -31,20 +35,56 @@ $pink : rgb(206, 56, 244);
     }
 }
 
-nav{
+
+
+nav.header{
+
+    .navbar-nav{
+        align-items: center;
+        
+        .nav-item{
+            height: fit-content;
+        }
+    }
 
     .js-change-theme{
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        height: 35px;
+        overflow: hidden;
         
-        img{
+        .img{
+            position: relative;
+            top: -20px;
             width: 30px;
-            height: 30px;
-            // display: block;
+
+            img{
+                width: 100%;
+                height: 30px;
+                margin-bottom: 5px;
+    
+                &:last-of-type{
+                    margin-bottom: 0;
+                }
+            }
         }
+
+        &[data-theme="dark"]{
+            .img{
+                position: relative;
+                top: 20px;
+            }    
+        }
+
+        *{
+            transition: .5s;
+        }
+        
     }
 }
+
 .slide{
 
     .bg {

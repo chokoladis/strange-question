@@ -28,12 +28,15 @@ class Question extends Model
     
     public static function getTopPopular(){
         //cache
-        return Question::query()
+        $query = Question::query()
             ->where('active', true)
-            ->join('question_statistics', 'questions.id', '=', 'question_statistics.question_id')
-            ->orderBy('question_statistics.views', 'desc')
+            ->with(['statistics' => function($q) {
+                    $q->orderBy('views', 'desc');
+                }, 'statistics'])
             ->limit(10)
             ->get();
+
+        return $query;
     }
 
     public function getCurrentUserComment(){
@@ -57,6 +60,10 @@ class Question extends Model
 
     public function file() : HasOne {
         return $this->hasOne(File::class, 'question_id', 'id');
+    }
+
+    public function statistics() : HasOne {
+        return $this->hasOne(QuestionStatistics::class, 'question_id', 'id');
     }
 
     // 
