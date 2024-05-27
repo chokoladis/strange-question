@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->unsignedBigInteger('file_id')->nullable()->after('code');
             $table->index('file_id', 'categories_file_idx');
-            $table->foreign('file_id', 'categories_file_fk')->references('id')->on('files')->cascadeOnDelete();
+            $table->foreign('file_id', 'categories_file_fk')->references('id')->on('file_categories')->cascadeOnDelete();
         });
     }
 

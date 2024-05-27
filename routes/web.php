@@ -37,6 +37,9 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
         }); 
 
     // });
+
+    Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
+    
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

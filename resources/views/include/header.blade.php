@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@php
+    $theme = $_COOKIE['theme_mode'] ?? 'dark';
+@endphp
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="{{ $theme }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +21,7 @@
     </head>
     <body>
         <div id="app">
-            <nav class="header navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <nav class="header navbar navbar-expand-md shadow-sm">
                 <div class="container">
                     <a class="navbar-brand" href="{{ url('/') }}">
                         {{ config('app.logo') }} 
@@ -72,7 +75,7 @@
                                 </li>
                             @endguest
                             <li class="nav-item">
-                                <div class="js-change-theme" data-theme="dark">
+                                <div class="js-change-theme" data-theme="{{ $theme }}">
                                     <div class="img">
                                         <img src="{{ Storage::url('main/moon.png') }}" alt="">
                                         <img src="{{ Storage::url('main/sun.png') }}" alt="">

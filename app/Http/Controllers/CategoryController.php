@@ -44,17 +44,16 @@ class CategoryController extends Controller
                 }
             }
             unset($data['img']);
+
+            // check role
+            $data['active'] = 1;
             
             $category = Category::firstOrCreate([ 'title' => $data['title'] ],$data);
+
+            return redirect()->route('categories.index');
+            
         } catch (\Throwable $th) {
             throw $th;
         }
-        dd($data);
-
-        // ['result' => $category]
-        // return HttpFoundationJsonResponse()-;
     }
-
-    // $data['user_id'] = auth()->user()->id;
-    // $data['user_id'] = 1;
 }

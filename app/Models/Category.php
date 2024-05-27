@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -22,68 +23,38 @@ class Category extends Model
 
     public static function getActive(){
         // use cache
-        $ar = [];
+
         $categories = Category::query()->where('active', true)->get();
-        foreach($categories as $category){
-            $id = $category['id'];
-            $parent = $category['category_parent_id'];
-            $test = self::findArray($ar, $parent, ['id']);
-            if ($parent){
-                $ar[$parent]['items'] = $category;
-            } else {
-                $ar[$id] = $category;
-            }
-             
-        }
-        return $ar;
+        
+        return $categories;
     }
 
-    static function findArray ($ar, $findValue, $executeKeys){
-        $result = array();
-    
-        foreach ($ar as $k => $v) {
-            if (is_array($ar[$k])) {
-                $second_result = self::findArray ($ar[$k], $findValue, $executeKeys);
-                $result = array_merge($result, $second_result);
-                continue;
-            }
-            if ($v === $findValue) {
-                foreach ($executeKeys as $val){
-                    $result[] = $ar[$val];
-                }
-                
-            }
-        }
-        return $result;
-    }
-
-    public function getParents(){
+    public function getParents($category, array $collectionResult = []){
         
         // use cache
-        $res = '';
-        $id = $this->category_parent_id;
+        if (isset($category->category_parent_id) 
+            && $parent = $category->category_parent_id){
 
-        while ($id){
-            
-            $model = Category::query($id)->where('active', 1)->first();
-            if (!$model)
-                return $res;
-
-            if ($res){
-                $res .= ' ->  <a href="'. route('category.detail', $model->code) .'">'.$model->title.'</a>';
-            } else {
-                $res = '<a href="'. route('category.detail', $model->code) .'">'.$model->title.'</a>';
+            try {
+                $category = Category::query()->where('active', 1)->where('id', $parent)->first();
+                $collectionResult[] = $category;
+                $this->getParents($category, $collectionResult);
+            } catch (\Throwable $th) {
+                throw $th;
             }
-
-            $id = $model->category_parent_id;
+        
         }
-
-        return $res;
+        
+        return $collectionResult;
     }
 
     public static function getElement($code){
         // use cache 
         return Category::where('code', $code)->first();
+    }
+
+    public function file() : HasOne {
+        return $this->hasOne(FileCategory::class, 'category_id', 'id');
     }
 
     public function categorytable() : MorphTo {

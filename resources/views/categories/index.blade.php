@@ -1,8 +1,13 @@
 @php use Illuminate\Support\Str; @endphp
+
+@push('style')
+    @vite(['resources/scss/categories.scss'])
+@endpush
+
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="categories-list container">
 
         @if (!empty($categories))
             <div class="row">
