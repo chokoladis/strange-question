@@ -1,5 +1,24 @@
 @extends('layouts.app')
 
+@foreach ($categories as $category)
+    @php
+        $daughters = $category->getDaughtersCategories();
+        foreach ($daughters as $items) {
+            if (!empty($items)){
+                if ($items->first()){
+                    foreach ($items as $key => $value) {
+                        # code...
+                    }
+                } else {
+                    // echo $items->title;
+                }
+            }
+        }
+        $selected = old('category_parent_id') == $category->id ? 'selected' : '';
+    @endphp
+    
+@endforeach
+
 @section('content')
     <div class="container">
         <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
@@ -12,7 +31,11 @@
                     <option value="0" selected>{{ __('Без категории') }}</option>
                     @foreach ($categories as $category)
                         @php
-                            $selected = old('category_parent_id') == $category->id ? 'selected' : '';                            
+                            $daughters = $category->getDaughtersCategories();
+                            foreach ($daughters as $items) {
+                                dump($items);    
+                            }
+                            $selected = old('category_parent_id') == $category->id ? 'selected' : '';
                         @endphp
                         <option value="{{ $category->id }}" {{ $selected }}>{{ $category->title }}</option>
                     @endforeach

@@ -5,7 +5,10 @@
 @extends('layouts.app')
 
 @php
-    $parents = $category->getParents($category);
+
+    $daughters = $category->getDaughterCategories();
+    $parents = $category->getParentsCategories();
+
     $title = $category->title; 
     $lastElem = end($parents);
 @endphp
@@ -15,22 +18,41 @@
         @if ($category->file)
             <div class="category-img">
                 {{-- todo dual img with opacity --}}
-                <img src="{{ Storage::url('categories/'. $category->file->path ) }}" alt="">
+                <img src="{{ Storage::url('categories/'. $category->file?->path ) }}" alt="">
             </div>
         @endif
 
         <h1>{{ $title }}</h1>
 
-        @if (!empty($parents))
-            <div class="subcategories fw-light mt-4">
-                <mark>{{ __('Является подразделом след. разделов:') }}</mark>
-                @php
-                    foreach ($parents as $item){
-                        $class = $lastElem == $item ? '' : 'me-3';
+        <div class="parents fw-light mt-4">
+            <mark>
+                <a href="{{ route("categories.index") }}">{{ __('Категории') }}</a>
+                @if (!empty($parents))
+                    @php
+                        foreach ($parents as $item){
+                            $class = $lastElem == $item ? '' : 'me-3';
 
-                        echo '<a href="'. route("category.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
-                    }
-                @endphp
+                            echo '-> <a href="'. route("category.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
+                        }
+                    @endphp
+                @endif
+            </mark>
+        </div>
+
+        @if (!empty($daughters))
+            <div class="daughters mt-4">
+                <h4>Подразделы</h4>
+                <div class="slider">
+                    @foreach ($daughters as $item)
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ Storage::url('categories/'.$item->file?->path) }}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $item->title }}</h5>
+                                <a href="{{ route('category.detail', $item->code) }}" class="btn btn-primary">link</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
     </div>
