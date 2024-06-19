@@ -25,29 +25,7 @@ class CategoryController extends Controller
     public function add(){
         
         // cache and function resource activeWithParents
-        // $categoriesFormating = [];
-
-        $categories = Category::getActive();
-
-        foreach ($categories as $category) {
-            $daughters = $category->getDaughtersCategories();
-            // dump($category, $daughters);
-        }
-        // foreach($categories as $category){
-
-        //     // $daughters = $category->getDaughterCategories();
-        //     // $parents = $category->getParentsCategories();
-            
-                
-        //     //     $categoriesFormating[$category->id] = [
-        //     //         'model' => $category,
-        //     //         'childs_ids' => $categoryChilds
-        //     //     ];
-        //     // } else {
-        //     //     $categoriesFormating[$category->category_parent_id]['childs'][$category->id] = $category;
-        //     // }
-            
-        // }
+        $categories = Category::getDaughtersCategories();
 
         return view('categories.add', compact('categories'));
     }

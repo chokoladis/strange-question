@@ -20,7 +20,7 @@ class QuestionController extends Controller
 
     public function add(){
 
-        $categories = Category::getActive();
+        $categories = Category::getDaughtersCategories();
 
         return view('questions.add', compact('categories'));
     }

@@ -1,23 +1,38 @@
 @extends('layouts.app')
 
-@foreach ($categories as $category)
-    @php
-        $daughters = $category->getDaughtersCategories();
-        foreach ($daughters as $items) {
-            if (!empty($items)){
-                if ($items->first()){
-                    foreach ($items as $key => $value) {
-                        # code...
+@php
+    foreach ($categories as $level => $categoryArr) {
+
+        $line = str_repeat('-', $level);
+        // $styleBg = 'background: rgba(0,0,0, '.($level * 0.1) .')';
+
+        foreach ($categoryArr as $id => $arr) {
+
+            $main = $arr['category'];
+            $childs = $arr['items'];
+
+            $selected = old('category_parent_id') == $main['id'] ? 'selected' : '';
+
+            $html = '<option value="'.$main['id'].'" '.$selected.'>'.$line.$main['title'].'</option>';
+
+            if (!empty($childs)){
+                foreach ($childs as $child) {
+                    
+                    $styleBg = 'background: rgba(0,0,0, '.$child['level'] * 0.1 .')';
+
+                    if (isset($categories[$child['level']][$child['id']]['html'])){
+                        $html .= $categories[$child['level']][$child['id']]['html'];
+                    } else {
+                        $selected .= old('category_parent_id') == $child['id'] ? 'selected' : $selected;
+                        $html = '<option value="'.$child['id'].'" '.$selected.'>'.$line.$child['title'].'</option>';
                     }
-                } else {
-                    // echo $items->title;
                 }
             }
+
+            $categories[$level][$main->id]['html'] = $html;
         }
-        $selected = old('category_parent_id') == $category->id ? 'selected' : '';
-    @endphp
-    
-@endforeach
+    }
+@endphp
 
 @section('content')
     <div class="container">
@@ -29,15 +44,8 @@
                 <label class="form-label">{{ __('crud.categories.fields.category_parent_id') }}</label>
                 <select name="category_parent_id" class="form-select">
                     <option value="0" selected>{{ __('Без категории') }}</option>
-                    @foreach ($categories as $category)
-                        @php
-                            $daughters = $category->getDaughtersCategories();
-                            foreach ($daughters as $items) {
-                                dump($items);    
-                            }
-                            $selected = old('category_parent_id') == $category->id ? 'selected' : '';
-                        @endphp
-                        <option value="{{ $category->id }}" {{ $selected }}>{{ $category->title }}</option>
+                    @foreach ($categories[0] as $arr)
+                        {!! $arr['html'] !!}
                     @endforeach
                 </select>
             </div>

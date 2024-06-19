@@ -33,50 +33,28 @@ class Category extends Model
         return $categories;
     }
 
-    public function getDaughtersCategories(){
+    public static function getDaughtersCategories(){
 
-        $collection = [];
+        $categories = Category::query()->where('active', true)->orderBy('level', 'desc')->get();
 
-        if ($this->level === 0){
+        $arr = $res = [];
 
-            $i = 0;
+        foreach ($categories as $item) {            
+            $arr[$item->level][] = $item;
+        }
 
-            while(true){
-                
-                if (isset($childs) && !empty($childs)){
+        foreach($arr as $level => $items){
 
-                    $tempArr = new Collection;
+            foreach ($items as $category) {
 
-                    foreach ($childs as $category) {
-                        $catLevel = $category?->first()?->level + 1;
-                        $childId = $category?->first()?->id; // ? todo
-
-                        // dump($catLevel, $childId, $category, $category->first());
-
-                        $tempArr->push($category?->first()?->getDaughterCategories($catLevel, $childId));
-                    }
-
-                    // dump($childs, $tempArr);
-
-                    $childs = $tempArr;
-
-                } else {
-                    $catLevel = $this->level + 1;
-                    $childId = $this->id;
-
-                    $childs = $this->getDaughterCategories($catLevel, $childId);
-                }
-
-                if ($i > 10)
-                    break;
-
-                $i++;
-                
-                $collection[] = $childs;
+                $res[$level][$category->id] = [
+                    'category' => $category,
+                    'items' => $category->getDaughterCategories($category->level + 1, $category->id)
+                ];
             }
-        } 
+        }
 
-        return $collection;
+        return $res;
     }
 
     public function getDaughterCategories($catLevel, $categoryParentId){
@@ -86,7 +64,8 @@ class Category extends Model
         return Category::query()
             ->where('level', $catLevel)
             ->where('category_parent_id', $categoryParentId)
-            ->get();
+            ->get()
+            ->toArray();
     }
 
     public function getParentsCategories(){

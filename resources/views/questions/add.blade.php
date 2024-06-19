@@ -4,6 +4,39 @@
     @vite(['resources/js/question.js'])
 @endpush
 
+@php
+    foreach ($categories as $level => $categoryArr) {
+
+        $line = str_repeat('-', $level);
+        // $styleBg = 'background: rgba(0,0,0, '.($level * 0.1) .')';
+
+        foreach ($categoryArr as $id => $arr) {
+
+            $main = $arr['category'];
+            $childs = $arr['items'];
+
+            $selected = old('category') == $main['id'] ? 'selected' : '';
+
+            $html = '<option value="'.$main['code'].'" '.$selected.'>'.$line.$main['title'].'</option>';
+
+            if (!empty($childs)){
+                foreach ($childs as $child) {
+                    
+                    $styleBg = 'background: rgba(0,0,0, '.$child['level'] * 0.1 .')';
+
+                    if (isset($categories[$child['level']][$child['id']]['html'])){
+                        $html .= $categories[$child['level']][$child['id']]['html'];
+                    } else {
+                        $selected .= old('category') == $child['id'] ? 'selected' : $selected;
+                        $html = '<option value="'.$child['code'].'" '.$selected.'>'.$line.$child['title'].'</option>';
+                    }
+                }
+            }
+
+            $categories[$level][$main->id]['html'] = $html;
+        }
+    }
+@endphp
 @section('content')
     <div class="container">
         <form action="{{ route('question.store') }}" method="POST" enctype="multipart/form-data">
@@ -15,8 +48,9 @@
             <div class="mt-5 mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.category') }}</label>
                 <select name="category" class="form-select">
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->code }}">{{ $category->title }}</option>
+                    <option value="0" selected>{{ __('Без категории') }}</option>
+                    @foreach ($categories[0] as $arr)
+                        {!! $arr['html'] !!}
                     @endforeach
                 </select>
             </div>
