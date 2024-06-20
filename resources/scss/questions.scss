@@ -1,0 +1,35 @@
+.detail-page{
+
+    .title{
+        display: flex;
+
+    }
+
+    .comments{
+        width: 90%;
+        border-top: 2px solid rgb(212, 212,212);
+        margin: 20px 0;
+        margin-left: auto;
+
+        .comment {
+            padding-top: 10px;
+            display: flex;
+            border-bottom: 1px solid rgb(240, 240,240); 
+
+            b{
+                font-size: 16px;
+                font-weight: 900;
+            }
+            p{
+                font-size: 14px;
+            }
+            .under{
+                margin-bottom: 5px;
+            }
+        }
+    }
+
+    form{
+        margin-top: 40px;
+    }
+}

@@ -25,6 +25,10 @@ $pink : rgb(206, 56, 244);
 .navbar-brand{
     font-family: 'desirable', 'Nunito', Arial, Helvetica, sans-serif;
 }
+.btn-mini{
+    padding: 5px;
+    font-size: 12px;
+}
 .btn-purple{
     background: $pink;
     color: white;

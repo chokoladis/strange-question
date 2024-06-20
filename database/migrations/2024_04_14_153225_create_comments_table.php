@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreign('user_id', 'comments_user_fk')->references('id')->on('users')->cascadeOnDelete();
             $table->text('text', 1000);
             $table->boolean('active')->default(false)->nullable();
+            
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

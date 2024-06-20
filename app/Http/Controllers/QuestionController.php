@@ -55,4 +55,12 @@ class QuestionController extends Controller
         $question = Question::getElement($question);
         return view('questions.detail', compact('question'));
     }
+
+    public static function findByUrl(string $url){
+        $urlExplode = explode('/', $url);
+        $questionCode = $urlExplode[count($urlExplode) - 1];
+
+        $question = Question::query()->where('code', $questionCode)->first();
+        return $question;
+    }
 }

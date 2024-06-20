@@ -34,7 +34,14 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
             });
-        }); 
+        });
+
+        Route::group(['prefix' => 'comments', 'controller' => 'CommentController'], function(){
+
+            Route::name('comment.')->group(function(){
+                Route::post('/', 'store')->name('store');
+            });
+        });
 
     // });
 
