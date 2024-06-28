@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\JsonResponse as HttpFoundationJsonResponse;
 
 class CategoryController extends Controller
@@ -19,7 +20,8 @@ class CategoryController extends Controller
 
     public function detail($category){
         $category = Category::getElement($category);
-        return view('categories.detail', compact('category'));
+        $childs = self::getCurrCategoryChilds($category);
+        return view('categories.detail', compact('category', 'childs'));
     }
 
     public function add(){
@@ -56,5 +58,19 @@ class CategoryController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    static function getCurrCategoryChilds(Category $category){
+
+        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function($category){
+            dd($category);
+
+            return Category::query()
+                ->where('active', 1)
+                // ->where('category_parent_id', $category->id)
+                ->get();
+        });
+
+        return $category_childs;
     }
 }

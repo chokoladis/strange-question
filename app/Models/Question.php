@@ -38,13 +38,59 @@ class Question extends Model
     }
 
     public function getCurrentUserComment(){
-        $res = null;
 
-        if (!empty($this->question_comment->toArray()))
-            $res = $this->question_comment?->comment;
-        // add check current user
+        $userId = auth()->id();
+
+        if (!$userId)
+            return false;
+
+        $res = QuestionComments::query()
+            ->where('question_id', $this->id)
+            ->with(['comment' => function($q) {
+                $q->where('user_id', auth()->id());
+            }, 'comment'])
+            ->first();
         
         return $res;
+    }
+
+    public function getPopularComment(){
+        
+        $result = false;
+
+        if ($this->question_comment){
+
+            $query = QuestionComments::where('question_id',$this->id)
+                ->join('comment_user_statuses as statuses','question_comments.comment_id','=','statuses.comment_id')
+                ->select(['statuses.status','statuses.comment_id'])
+                // ->groupBy('statuses.comment_id')
+                ->get();
+
+            $comments = [];
+
+            if ($query->isNotEmpty()){
+                foreach ($query as $comment) {
+
+                    if (!isset($comments[$comment->comment_id]))
+                        $comments[$comment->comment_id] = 0;
+    
+                    $plus = $comment->status === 'like' ? 1 : -1;
+    
+                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $plus;                
+                }
+
+                $popularCommentId = array_search(max($comments), $comments);
+
+                $popularComment = Comment::query('id', $popularCommentId)->first();
+
+                return $popularComment;
+            }
+            
+            return false;
+        }
+
+        return false;
+
     }
 
     // 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="page-questions container">
         @foreach ($questions as $question)
 
             @php
@@ -31,15 +31,28 @@
                                     <p class="card-text"><small class="text-body-secondary">{{ $question->answer->created_at->diffForHumans() }}</small></p>
                                 </div>
                             @endif
-                            @if ($question->getCurrentUserComment())
-                                {{ $question->getCurrentUserComment() }}
+                            @if ($currentComment = $question->getCurrentUserComment())
+                                <div class="current-user-comment alert alert-success" role="alert">
+                                    <h5 class="alert-heading">{{ $currentComment->comment->user_comments->user->name }}</h4>
+                                    <p class="mb-0">{{ $currentComment->comment->text }}</p>
+                                </div>  
                             @endif
-                            {{-- самый популярный комментарий --}}
+                            @if ($popularComment = $question->getPopularComment())
+                                <div class="popular-answer alert alert-info" role="alert">
+                                    <b class="alert-heading">{{ __('Самый популярный ответ') }}</b>
+                                    <hr>
+                                    <h5>{{ $popularComment->user_comments->user->name }}</h5>
+                                    <p class="mb-0">{{ $popularComment->text }}</p>
+                                </div>
+                            @endif
+                            
 
-                            <p class="card-text"><small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small></p>
-                            @if ($question->created_at != $question->updated_at)
-                                <p class="card-text"><small class="text-body-secondary">{{ __('Изменен ') . $question->updated_at->diffForHumans() }}</small></p>
-                            @endif
+                            
+                                <p class="card-text"><small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small></p>
+                                @if ($question->created_at != $question->updated_at)
+                                    <p class="card-text"><small class="text-body-secondary">{{ __('Изменен ') . $question->updated_at->diffForHumans() }}</small></p>
+                                @endif
+                            
                         </div>
                     </div>
                 </a>

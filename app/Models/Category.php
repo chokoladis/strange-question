@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PDO;
 
 class Category extends Model
 {
     use HasFactory;
+
+    static $timeCache = 43200;
     
     public $guarded = [];
 
@@ -66,6 +69,22 @@ class Category extends Model
             ->where('category_parent_id', $categoryParentId)
             ->get()
             ->toArray();
+    }
+
+    public function getCurrCategoryChilds(){
+
+        // $category = $this;
+
+        $category_childs = Cache::remember($this->id.'_childs', self::$timeCache, function($category){
+            dd($category);
+
+            return Category::query()
+                ->where('active', 1)
+                // ->where('category_parent_id', $category->id)
+                ->get();
+        });
+
+        return $category_childs;
     }
 
     public function getParentsCategories(){

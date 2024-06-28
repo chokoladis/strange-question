@@ -16,9 +16,15 @@ class Comment extends Model
 
     public $guarded = [];
 
-    public function userComments() : HasOne {
+    public function user_comments() : HasOne {
         
         return $this->HasOne(UserComments::class);
+
+    }
+
+    public function user_statuses() : HasMany {
+        
+        return $this->HasMany(CommentUserStatus::class);
 
     }
 

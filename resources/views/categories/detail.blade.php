@@ -6,9 +6,10 @@
 
 @php
 
-    $daughters = $category->getDaughterCategories();
+    // $childs = $category->getCurrCategoryChilds();
     $parents = $category->getParentsCategories();
 
+    dd($childs);
     $title = $category->title; 
     $lastElem = end($parents);
 @endphp
@@ -44,6 +45,8 @@
                 <h4>Подразделы</h4>
                 <div class="slider">
                     @foreach ($daughters as $item)
+                    
+                        
                         <div class="card" style="width: 18rem;">
                             <img src="{{ Storage::url('categories/'.$item->file?->path) }}" class="card-img-top" alt="...">
                             <div class="card-body">

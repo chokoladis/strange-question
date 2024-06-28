@@ -33,7 +33,7 @@
                         <div class="main">
                             <div class="user">
                                 <div class="icon"></div>
-                                <b>{{ $item->comment->userComments?->user->name }}</b>
+                                <b>{{ $item->comment->user_comments?->user->name }}</b>
                             </div>
                             <p>{{ empty($item->comment) ? 'Удаленный комментарий' : $item->comment->text }}</p>
                             <div class="under">

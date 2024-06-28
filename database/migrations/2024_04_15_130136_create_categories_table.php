@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_parent_id')->nullable();
             $table->string('title');
             $table->string('code')->unique();
+            $table->smallInteger('level')->default(0)->nullable();
             $table->smallInteger('sort')->default(100)->nullable();
             $table->boolean('active')->nullable();
             $table->timestamps();
