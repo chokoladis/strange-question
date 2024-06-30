@@ -64,6 +64,20 @@
                                 @endif
                             </div>
                         </div>
+
+                        @php
+                            $params = array(
+                                'client_id'     => config('auth.socials.google.client_id'),
+                                'redirect_uri'  => config('auth.socials.google.redirect_uri'),
+                                'response_type' => 'code',
+                                'scope'         => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+                            );
+                            
+                            $googleUrl = 'https://accounts.google.com/o/oauth2/auth?' . urldecode(http_build_query($params));
+                        @endphp
+
+                        <a href="{{ $googleUrl }}">{{ __('Войти с помощью Google')}}</a>
+
                     </form>
                 </div>
             </div>

@@ -112,4 +112,11 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    'socials' => [
+        'google' => [
+            'client_id' => env('GOOGLE_AUTH_CLIENT_ID'),
+            'redirect_uri'  => env('GOOGLE_AUTH_URL'),
+        ],        
+    ]
+
 ];

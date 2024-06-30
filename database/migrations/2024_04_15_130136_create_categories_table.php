@@ -16,9 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('category_parent_id')->nullable();
             $table->string('title');
             $table->string('code')->unique();
+            $table->unsignedBigInteger('file_id')->nullable();
+            $table->index('file_id', 'categories_file_idx');
+            $table->foreign('file_id', 'categories_file_fk')->references('id')->on('file_categories')->cascadeOnDelete();
             $table->smallInteger('level')->default(0)->nullable();
             $table->smallInteger('sort')->default(100)->nullable();
             $table->boolean('active')->nullable();
+            
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/api/google_auth.php', [ App\Http\Controllers\ServicesAuthController::class, 'googleAuth' ])->name('google_auth');
 
 Route::group(['namespace' => 'App\Http\Controllers' ], function(){
 

@@ -16,6 +16,10 @@ class CommentController extends Controller
         try {
             $data['user_id'] = auth()->id();
 
+            if ($data['comment_reply']){
+                
+            }
+
             $question = QuestionController::findByUrl(url()->previous());
             $comment = Comment::firstOrCreate(['text' => $data['text'], 'user_id' => $data['user_id']], $data);
 
