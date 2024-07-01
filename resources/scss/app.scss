@@ -149,3 +149,33 @@ footer{
     }
 
 }
+
+.services_auth{
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 10px;
+
+    p{
+        margin: 0;
+        text-align: right;
+    }
+
+    .services{
+        display: flex;
+        // justify-content: space-between;
+        align-items: center;
+        // margin-left: 10px;
+
+
+        a{
+            // max-width: 32px;
+            // max-height: 32px;
+
+            img{
+                height: 32px;
+                object-fit: contain;
+            }
+        }
+    }
+}

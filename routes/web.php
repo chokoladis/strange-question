@@ -11,6 +11,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/api/google_auth.php', [ App\Http\Controllers\ServicesAuthController::class, 'googleAuth' ])->name('google_auth');
+Route::get('/api/yandex_auth.php', [ App\Http\Controllers\ServicesAuthController::class, 'yandexAuth' ])->name('yandex_auth');
 
 Route::group(['namespace' => 'App\Http\Controllers' ], function(){
 

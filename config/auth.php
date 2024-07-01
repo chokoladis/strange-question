@@ -115,8 +115,14 @@ return [
     'socials' => [
         'google' => [
             'client_id' => env('GOOGLE_AUTH_CLIENT_ID'),
+            'client_secret' => env('GOOGLE_AUTH_SECRET'),
             'redirect_uri'  => env('GOOGLE_AUTH_URL'),
-        ],        
+        ],
+        'yandex' => [
+            'client_id' => env('YANDEX_AUTH_CLIENT_ID'),
+            'client_secret' => env('YANDEX_AUTH_SECRET'),
+            'redirect_uri'  => env('YANDEX_AUTH_URL'),
+        ],
     ]
 
 ];

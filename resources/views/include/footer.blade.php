@@ -10,7 +10,8 @@
                     </div>
                 </div>
             </footer>
-        </div>    
+        </div>
+        
         @vite(['resources/js/jquery.min.js', 'resources/js/app.js'])
         @stack('script')
     </body>
