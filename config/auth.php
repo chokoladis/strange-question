@@ -123,6 +123,11 @@ return [
             'client_secret' => env('YANDEX_AUTH_SECRET'),
             'redirect_uri'  => env('YANDEX_AUTH_URL'),
         ],
+        'telegram' => [
+            'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+            'redirect_uri' => env('TELEGRAM_AUTH_REDIRECT'),
+            
+        ]
     ]
 
 ];

@@ -44,9 +44,11 @@
                 <label class="form-label">{{ __('crud.categories.fields.category_parent_id') }}</label>
                 <select name="category_parent_id" class="form-select">
                     <option value="0" selected>{{ __('Без категории') }}</option>
-                    @foreach ($categories[0] as $arr)
-                        {!! $arr['html'] !!}
-                    @endforeach
+                    @if (!empty($categories))
+                        @foreach ($categories[0] as $arr)
+                            {!! $arr['html'] !!}
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div class="mb-3">

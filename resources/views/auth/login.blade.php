@@ -82,6 +82,12 @@
                             );
                             
                             $yUrl = 'https://oauth.yandex.ru/authorize?' . urldecode(http_build_query($yData));
+
+                            // $tgData = [
+                            //     'bot_name' => 'whaitif_bot',
+                            //     'bot_token' => config('auth.socials.telegram.bot_token'),
+                            //     'redirect' => config('auth.socials.telegram.redirect_uri')
+                            // ];
                         @endphp
 
                         <div class="row services_auth">

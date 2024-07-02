@@ -10,6 +10,14 @@ class FileService {
     const MAX_FILE_SIZE = 3150000;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
 
+    // use 
+    // $image = new Imagick();
+    // $image->readImage($input);
+    
+    // $image->setImageFormat('webp');
+    // $image->setImageCompressionQuality(100);
+    // $image->writeImage($output);
+
     public static function save(UploadedFile $img, $mainDir = 'main'){
         
         $root = public_path() . '/storage/' . $mainDir;

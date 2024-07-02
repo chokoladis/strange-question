@@ -49,9 +49,11 @@
                 <label class="form-label">{{ __('crud.questions.fields.category') }}</label>
                 <select name="category" class="form-select">
                     <option value="0" selected>{{ __('Без категории') }}</option>
-                    @foreach ($categories[0] as $arr)
-                        {!! $arr['html'] !!}
-                    @endforeach
+                    @if (!empty($categories))
+                        @foreach ($categories[0] as $arr)
+                            {!! $arr['html'] !!}
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div class="mb-3">

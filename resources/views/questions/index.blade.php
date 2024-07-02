@@ -58,5 +58,9 @@
                 </a>
             </div>
         @endforeach
+
+        @if ($questions->isEmpty())
+            <p>Вопросов пока никто не задавал -_-</p>
+        @endif
     </div>
 @endsection

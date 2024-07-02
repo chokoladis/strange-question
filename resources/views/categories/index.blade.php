@@ -9,7 +9,9 @@
 @section('content')
     <div class="categories-list container">
 
-        @if (!empty($categories))
+        @if ($categories->isEmpty())
+            <p>Нэт категорий</p>
+        @else
             <div class="row">
 
                 @foreach ($categories as $item)
