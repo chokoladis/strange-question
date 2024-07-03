@@ -4,19 +4,36 @@ namespace App\Services;
 
 use App\Models\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class FileService {
 
     const MAX_FILE_SIZE = 3150000;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
 
-    // use 
-    // $image = new Imagick();
-    // $image->readImage($input);
-    
-    // $image->setImageFormat('webp');
-    // $image->setImageCompressionQuality(100);
-    // $image->writeImage($output);
+    public static function createThumbWebp(string $filePath){
+
+        $imgManager = new ImageManager(new Driver());
+
+        $realPath = public_path().Storage::url($filePath);
+
+        $image = $imgManager->read($realPath);
+
+        $size = filesize($realPath); // bites
+        $kbSize = $size / 1024;
+        if ($kbSize > 100){
+
+            $pathInfo = pathinfo($filePath);
+
+            $newFilepath = $pathInfo['dirname'].$pathInfo['filename'].'.webp';
+            
+            $image->resize(300)->toWebp(80)->save($newFilepath);
+        }
+        
+        dd($newFilepath, $image, $kbSize);
+    }
 
     public static function save(UploadedFile $img, $mainDir = 'main'){
         
