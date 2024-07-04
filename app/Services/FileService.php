@@ -17,22 +17,36 @@ class FileService {
 
         $imgManager = new ImageManager(new Driver());
 
-        $realPath = public_path().Storage::url($filePath);
+        // $realPath = public_path().Storage::url($filePath);
+        $image = $imgManager->read($filePath);
 
-        $image = $imgManager->read($realPath);
-
-        $size = filesize($realPath); // bites
+        $size = filesize($filePath); // bites
         $kbSize = $size / 1024;
+
+        $pathInfo = pathinfo($filePath);
+        $mainPath = $pathInfo['dirname'].'/'.$pathInfo['filename'].'.webp';
+        $newFilepath = public_path().Storage::url($mainPath);
+
         if ($kbSize > 100){
-
-            $pathInfo = pathinfo($filePath);
-
-            $newFilepath = $pathInfo['dirname'].$pathInfo['filename'].'.webp';
             
-            $image->resize(300)->toWebp(80)->save($newFilepath);
+            $image->resize(300, 300)->toWebp(80)->save($newFilepath);
+
+        } elseif (file_exists($newFilepath)){
+
+            $size = filesize($newFilepath);
+            $kbSize = $size / 1024;
+
+            if ($kbSize > 100){
+
+                $image = $imgManager->read($newFilepath);
+                $image->resize(300, 300)->toWebp(70)->save($newFilepath);
+            }
+
+        } else {
+            return false;
         }
-        
-        dd($newFilepath, $image, $kbSize);
+
+        return $mainPath;
     }
 
     public static function save(UploadedFile $img, $mainDir = 'main'){
@@ -55,13 +69,19 @@ class FileService {
             $name = $img->hashName();
             $filePath = $subDir.'/'.$img->hashName();
     
-            $img->move($folder, $img->hashName());        
-    
             $data = [
                 'name' => $name,
                 'expansion' => $ext,
                 'path' => $filePath, 
             ];
+
+            dump($img->hashName());
+
+            if ($thumb = self::createThumbWebp($folder.$img->hashName())){
+                array_push($data, ['path_thumbnails' => $thumb]);
+            }
+
+            $img->move($folder, $img->hashName());
     
             $file = File::create($data);
         } catch (\Throwable $th) {

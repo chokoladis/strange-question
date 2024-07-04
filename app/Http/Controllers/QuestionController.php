@@ -14,9 +14,6 @@ class QuestionController extends Controller
 {
 
     public function index(){
-
-        FileService::createThumbWebp('main/google_icon.png');
-
         $questions = Question::getActive();
         return view('questions.index', compact('questions'));
     }
