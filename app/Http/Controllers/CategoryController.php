@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Category\StoreRequest;
 use App\Models\Category;
 use App\Services\FileService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\HttpFoundation\JsonResponse as HttpFoundationJsonResponse;
 
 class CategoryController extends Controller
 {

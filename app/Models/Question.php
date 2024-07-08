@@ -103,7 +103,7 @@ class Question extends Model
     }
 
     public function file() : HasOne {
-        return $this->hasOne(File::class, 'question_id', 'id');
+        return $this->hasOne(File::class, 'id', 'file_id');
     }
 
     public function statistics() : HasOne {
@@ -125,7 +125,7 @@ class Question extends Model
         });
 
         static::created(function($item) {
-            File::find($item->file_id)->update(['question_id' => $item->id]);
+            // File::find($item->file_id)->update(['question_id' => $item->id]);
             QuestionStatistics::create([
                 'question_id' => $item->id
             ]);

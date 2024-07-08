@@ -21,6 +21,14 @@ return [
             'text' => 'Коммент',
         ]
     ],
+    'feedback' => [
+        'fields' => [
+            'email' => 'Email',
+            'phone' => 'Телефон',
+            'subject' => 'Тема',
+            'comment' => 'Комментарий'
+        ]
+    ]
 ];
 
 ?>

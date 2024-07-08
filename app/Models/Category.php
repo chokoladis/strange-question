@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -122,50 +121,12 @@ class Category extends Model
     }
 
     public static function getActive(){
-        // use cache
 
+        // use cache
         $categories = Category::query()->where('active', true)->get();
         
         return $categories;
     }
-
-    // public static function getParents($category, array $collectionResult = []){
-        
-    //     // use cache
-    //     if (isset($category->category_parent_id) 
-    //         && $parent = $category->category_parent_id){
-
-    //         try {
-    //             $category = Category::query()->where('active', 1)->where('id', $parent)->first();
-    //             $collectionResult[$category->id] = $category;
-    //             return self::getParents($category, $collectionResult);
-    //         } catch (\Throwable $th) {
-    //             throw $th;
-    //         }
-        
-    //     }
-        
-    //     return $collectionResult;
-    // }
-
-    // public static function getParentsForList($categories){
-
-    //     $result = [];
-
-    //     foreach ($categories as $category) {
-
-    //         if (isset($category->category_parent_id) && $category->category_parent_id){
-
-    //             $result[$category->category_parent_id][] = $category->id;
-    //             // $result[$category->id] = self::getParents($category);
-
-    //         }
-            
-    //     }
-
-    //     return $result;
-
-    // }
 
     public static function getElement($code){
         // use cache 
@@ -173,7 +134,7 @@ class Category extends Model
     }
 
     public function file() : HasOne {
-        return $this->hasOne(FileCategory::class, 'category_id', 'id');
+        return $this->hasOne(File::class, 'id', 'file_id');
     }
 
     public function categorytable() : MorphTo {
@@ -191,6 +152,10 @@ class Category extends Model
          */
         static::creating(function($item) {
             $item->code = Str::slug(Str::lower($item->title),'-');
+        });
+
+        static::deleted(function($item){
+            File::find($item->file_id)->delete();
         });
 
     }

@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Models\File;
+use App\Models\FileCategory;
 
 class FileService {
 
@@ -17,8 +18,9 @@ class FileService {
 
         $imgManager = new ImageManager(new Driver());
 
-        // $realPath = public_path().Storage::url($filePath);
-        $image = $imgManager->read($filePath);
+        $realPath = public_path().Storage::url($filePath);
+        dump($realPath);
+        $image = $imgManager->read($realPath);
 
         $size = filesize($filePath); // bites
         $kbSize = $size / 1024;
@@ -49,7 +51,7 @@ class FileService {
         return $mainPath;
     }
 
-    public static function save(UploadedFile $img, $mainDir = 'main'){
+    public static function save(UploadedFile $img, string $mainDir = 'main'){
         
         $root = public_path() . '/storage/' . $mainDir;
 
@@ -75,15 +77,14 @@ class FileService {
                 'path' => $filePath, 
             ];
 
-            dump($img->hashName());
-
-            if ($thumb = self::createThumbWebp($folder.$img->hashName())){
-                array_push($data, ['path_thumbnails' => $thumb]);
-            }
-
             $img->move($folder, $img->hashName());
-    
-            $file = File::create($data);
+
+            if ($mainDir === 'categories'){
+                $file = FileCategory::create($data);
+            } else {
+                $file = File::create($data);
+            }
+            
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -100,9 +101,9 @@ class FileService {
         
         $mk_name = substr($file_name,0,3);
 
-        $folder = public_path() . $mainDir . $mk_name;
+        $folder = public_path() . $mainDir . $mk_name.'/';
         if (!is_dir($folder)){
-            mkdir($folder, 755);
+            mkdir($folder, 0755);
         }
 
         return [ 'subdir' => $mk_name, 'file_name' => $file_name ];

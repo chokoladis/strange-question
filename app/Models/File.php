@@ -14,9 +14,9 @@ class File extends Model
 
     public $guarded = [];
 
-    public function question() : BelongsTo {
-        return $this->belongsTo(Question::class);
-    }
+    // public function question() : BelongsTo {
+    //     return $this->belongsTo(Question::class);
+    // }
 
 
     public static function boot() {
@@ -28,7 +28,7 @@ class File extends Model
          *
          * @return response()
          */
-        static::creating(function($item) {
+        static::created(function($item) {
 
             // $item->path_thumbnail = FileService::createThumbWebp($item->path);
             

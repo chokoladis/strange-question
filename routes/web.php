@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeedbackController;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
         });
 
     // });
+    Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 
     Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
     

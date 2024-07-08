@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('file_categories', function (Blueprint $table) {
+        Schema::create('feedback', function (Blueprint $table) {
             $table->id();
-
-            $table->string('name');
-            $table->string('expansion', 5);
-            $table->string('path')->unique();
-            $table->string('path_thumbnail')->nullable()->unique();
-            $table->string('description')->nullable();
-
+            $table->string('email');
+            $table->string('phone', 11);
+            $table->string('subject');
+            $table->string('comment', 2000);
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('file_categories');
+        Schema::dropIfExists('feedback');
     }
 };
