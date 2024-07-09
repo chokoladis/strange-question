@@ -18,6 +18,10 @@ return new class extends Migration
             $table->index('user_id', 'questions_user_idx');
             $table->foreign('user_id', 'questions_user_fk')->references('id')->on('users')->cascadeOnDelete();
 
+            $table->unsignedBigInteger('file_id')->nullable();
+            $table->index('file_id', 'questions_file_idx');
+            $table->foreign('file_id', 'questions_file_fk')->references('id')->on('files')->cascadeOnDelete();
+
             $table->string('title', 255);
             $table->index('title', 'questions_title_idx');
             $table->string('code', 255)->unique();
@@ -25,7 +29,7 @@ return new class extends Migration
             
             $table->unsignedBigInteger('right_comment_id')->default(null);
             $table->index('right_comment_id', 'questions_right_comment_idx');
-            $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();            
+            $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();
 
             $table->timestamps();
         });

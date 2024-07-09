@@ -79,11 +79,7 @@ class FileService {
 
             $img->move($folder, $img->hashName());
 
-            if ($mainDir === 'categories'){
-                $file = FileCategory::create($data);
-            } else {
-                $file = File::create($data);
-            }
+            $file = File::create($data);
             
         } catch (\Throwable $th) {
             throw $th;

@@ -9,7 +9,7 @@
     // $childs = $category->getCurrCategoryChilds();
     $parents = $category->getParentsCategories();
 
-    dd($childs);
+    // dd($childs);
     $title = $category->title; 
     $lastElem = end($parents);
 @endphp
@@ -28,15 +28,15 @@
         <div class="parents fw-light mt-4">
             <mark>
                 <a href="{{ route("categories.index") }}">{{ __('Категории') }}</a>
-                @if (!empty($parents))
-                    @php
+                @php
+                    if (!empty($parents)){
                         foreach ($parents as $item){
                             $class = $lastElem == $item ? '' : 'me-3';
 
                             echo '-> <a href="'. route("category.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
                         }
-                    @endphp
-                @endif
+                    }                        
+                @endphp
             </mark>
         </div>
 

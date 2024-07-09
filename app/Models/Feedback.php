@@ -9,6 +9,8 @@ class Feedback extends Model
 {
     use HasFactory;
 
+    public $guarded = [];
+
     const SUBJECTS = [
         'Проблемы с сайтом', 'Предложения и идеи', 'Сотрудничество/реклама', 'Другое'
     ];

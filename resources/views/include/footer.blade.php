@@ -49,7 +49,7 @@
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.phone') }}</label>
                                 {{-- js-phone --}}
-                                <input type="number" name="phone" class="form-control" 
+                                <input type="tel" name="phone" class="form-control js-phone-mask" 
                                     placeholder="7 901 234 5678" value="{{ old('phone') }}">
                                 @if ($errors->has('phone'))
                                     @foreach ($errors->get('phone') as $item)
@@ -80,7 +80,7 @@
             </div>
         </div>
         
-        @vite(['resources/js/jquery.min.js', 'resources/js/app.js'])
+        @vite(['resources/js/app.js'])
         @stack('script')
     </body>
 </html>

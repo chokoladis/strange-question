@@ -1,4 +1,8 @@
 import './bootstrap';
+import '../../node_modules/jquery/dist/jquery.min.js';
+import '../../node_modules/jquery-mask-plugin/src/jquery.mask.js';
+ 
+$('.js-phone-mask').mask('+9 999 9999 999');
 
 async function setThemeMode(){
 

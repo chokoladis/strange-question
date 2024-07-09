@@ -60,12 +60,11 @@ class CategoryController extends Controller
 
     static function getCurrCategoryChilds(Category $category){
 
-        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function($category){
-            dd($category);
+        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function() use ($category){
 
             return Category::query()
                 ->where('active', 1)
-                // ->where('category_parent_id', $category->id)
+                ->where('category_parent_id', $category->id)
                 ->get();
         });
 
