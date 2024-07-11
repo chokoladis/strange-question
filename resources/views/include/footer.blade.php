@@ -25,6 +25,7 @@
         
         
         <!-- Modal -->
+        {{-- do like component --}}
         <div class="modal fade" id="modal-feedback" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalFeedbackTitle" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -39,7 +40,7 @@
                 
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.email') }}</label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="example@mail.ru">
+                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="example@mail.ru" required>
                                 @if ($errors->has('email'))
                                     @foreach ($errors->get('email') as $item)
                                         <p class="error">{{ $item  }}</p>
@@ -59,7 +60,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.subject') }}</label>
-                                <select name="subject" class="form-select">
+                                <select name="subject" class="form-select" required>
                                     @foreach(Feedback::SUBJECTS as $subject)
                                         <option>{{ $subject }}</option>
                                     @endforeach
@@ -67,14 +68,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.comment') }}</label>
-                                <textarea name="comment" class="form-control" cols="40" rows="3"></textarea>
+                                <textarea name="comment" class="form-control" cols="40" rows="3" required></textarea>
                             </div>
                             
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">{{ __('system.add') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('system.add') }}</button>
                     </div>
                 </div>
             </div>

@@ -26,6 +26,32 @@ async function setThemeMode(){
     }
 }
 
+async function sendAjax(route, method, data){
+
+    // try {
+        let settings = {
+            method: method,
+            headers: {
+                'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+            },
+            body: data,
+        };
+
+        let query = await fetch(route, settings);
+        let json = await query.json();
+        
+        // if ()
+        console.log(query);
+        console.log(json);
+        console.log(query.headers);
+
+    // } catch (error) {
+        // console.log(query);
+        // console.log(error);
+        // console.error(error);
+    // }
+}
+
 $(function(){
     $('.js-change-theme').on('click', function(){
 
@@ -36,6 +62,19 @@ $(function(){
         // $('html').attr('')
     });
 
-    // $('#modal-feedback')
+    $('#modal-feedback [type="submit"]').on('click', function(){
+        let form = $('#modal-feedback form');
+        let action = form.attr('action');
+        let method = form.attr('method');
+        let formData = form.serializeArray();
+        let sendData = new FormData();
+
+        $.each(formData, function (key, input) {
+            sendData.append(input.name, input.value);
+        });
+
+        sendAjax(action, method, sendData);
+    });
+
 });
 

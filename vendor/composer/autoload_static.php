@@ -39,6 +39,7 @@ class ComposerStaticInit968f73bcf5520ee401d641d0d79555ec
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        'e617b14322a074392076a2f38eaf6115' => __DIR__ . '/../..' . '/app/Helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -560,6 +561,7 @@ class ComposerStaticInit968f73bcf5520ee401d641d0d79555ec
         'App\\Http\\Controllers\\CommentController' => __DIR__ . '/../..' . '/app/Http/Controllers/CommentController.php',
         'App\\Http\\Controllers\\CommentUserStatusController' => __DIR__ . '/../..' . '/app/Http/Controllers/CommentUserStatusController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\FeedbackController' => __DIR__ . '/../..' . '/app/Http/Controllers/FeedbackController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\QuestionController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuestionController.php',
         'App\\Http\\Controllers\\QuestionStatisticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuestionStatisticsController.php',
@@ -568,14 +570,15 @@ class ComposerStaticInit968f73bcf5520ee401d641d0d79555ec
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Requests\\Category\\StoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Category/StoreRequest.php',
         'App\\Http\\Requests\\Comment\\StoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Comment/StoreRequest.php',
+        'App\\Http\\Requests\\Feedback\\StoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Feedback/StoreRequest.php',
         'App\\Http\\Requests\\Question\\StoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Question/StoreRequest.php',
         'App\\Mail\\UserInfoMail' => __DIR__ . '/../..' . '/app/Mail/UserInfoMail.php',
         'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',
         'App\\Models\\Comment' => __DIR__ . '/../..' . '/app/Models/Comment.php',
         'App\\Models\\CommentUserStatus' => __DIR__ . '/../..' . '/app/Models/CommentUserStatus.php',
         'App\\Models\\CommentsReply' => __DIR__ . '/../..' . '/app/Models/CommentsReply.php',
+        'App\\Models\\Feedback' => __DIR__ . '/../..' . '/app/Models/Feedback.php',
         'App\\Models\\File' => __DIR__ . '/../..' . '/app/Models/File.php',
-        'App\\Models\\FileCategory' => __DIR__ . '/../..' . '/app/Models/FileCategory.php',
         'App\\Models\\Question' => __DIR__ . '/../..' . '/app/Models/Question.php',
         'App\\Models\\QuestionComments' => __DIR__ . '/../..' . '/app/Models/QuestionComments.php',
         'App\\Models\\QuestionStatistics' => __DIR__ . '/../..' . '/app/Models/QuestionStatistics.php',

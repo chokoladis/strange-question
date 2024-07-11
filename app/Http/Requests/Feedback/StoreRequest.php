@@ -22,10 +22,10 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'phone' => ['numeric', 'digits:11'],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/[\w\d]+@[\w\d]+\.[\w\d]+/i'],
+            'phone' => ['string', 'nullable'],
             'subject' => ['required', 'string', 'max:40'],
-            'comment' => ['string']
+            'comment' => ['required', 'string']
         ];
     }
 }
