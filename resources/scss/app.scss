@@ -147,7 +147,17 @@ footer{
         z-index: 2;
         position: relative;
     }
+}
 
+.modal{
+    .modal-header{
+        background: linear-gradient(187deg, rgba(219, 122, 26, 0.837) 0% 10%, rgba(44, 159, 24, 0.782) 60%);
+        color: white;
+        
+        .btn-close{
+            filter: invert(1);
+        }
+    }
 }
 
 .services_auth{

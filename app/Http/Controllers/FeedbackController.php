@@ -21,15 +21,13 @@ class FeedbackController extends Controller
             // if ($data['email'])
 
             if (isset($data['phone']) && $data['phone']){
-                preg_match_all('/[\d]/', $data['phone'], $matches);
-                $phone = implode('', $matches[0]);
+                $data['phone'] = getNumbers($data['phone']);
 
-                if (strlen($phone) !== 11){
+                if (strlen($data['phone']) !== 11){
                     $success = false;
-                    $error = 'Ошибка заполнения телефона';
+                    $error['phone'] = 'Ошибка заполнения телефона';
                 }
             }
-            // if ($data[''])
 
             if ($success){
                 $check = Feedback::firstOrCreate([
@@ -41,13 +39,13 @@ class FeedbackController extends Controller
                     $response = 'Заявка успешно отправлена';
                 } else {
                     $success = false;
-                    $error = 'Ваша заявка уже отправлена и ожидает обработки';
+                    $error['other'] = 'Ваша заявка уже отправлена и ожидает обработки';
                 }
             }
 
             dump($data);
 
-            return responseJson($success, $response, $error);
+            return responseJson($success, $response, $error, 201);
         } catch (\Throwable $th) {
 
             Log::error($th, $data);

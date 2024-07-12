@@ -38,12 +38,15 @@ async function sendAjax(route, method, data){
         };
 
         let query = await fetch(route, settings);
-        let json = await query.json();
+
+        console.log(query.status);
         
-        // if ()
-        console.log(query);
-        console.log(json);
-        console.log(query.headers);
+        if (query.status == 201){
+            let json = await query.json();
+
+            console.log(json);
+        }
+        
 
     // } catch (error) {
         // console.log(query);
