@@ -10,7 +10,7 @@
     <div class="categories-list container">
 
         @if ($categories->isEmpty())
-            <p>Нэт категорий</p>
+            <p>{{ __('Нэт категорий') }}</p>
         @else
             <div class="row">
 
@@ -19,10 +19,11 @@
                     <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
                         <div class="card">
                             <a href="{{ route('category.detail', $item->code ) }}">
-                                <img src="{{ Storage::url('categories/'.$item->file?->path); }}" alt="Картинка категории не найдена">
+                                <img src="{{ $item->file ? Storage::url('categories/'.$item->file->path) : $SITE_NOPHOTO }}"
+                                     alt="Картинка категории не найдена">
                                 <div class="card-body">
                                     {{ $item->title }}
-                                </div>        
+                                </div>
                             </a>
                         </div>
                     </div>

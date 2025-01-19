@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('code', 255)->unique();
             $table->boolean('active')->default(false);
             
-            $table->unsignedBigInteger('right_comment_id')->default(null);
+            $table->unsignedBigInteger('right_comment_id')->nullable()->default(null);
             $table->index('right_comment_id', 'questions_right_comment_idx');
             $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();
 

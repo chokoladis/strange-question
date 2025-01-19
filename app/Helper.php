@@ -16,4 +16,3 @@ if (!function_exists('getNumbers')){
         return implode('', $matches[0]);
     }
 }
-                

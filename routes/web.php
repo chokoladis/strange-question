@@ -51,7 +51,14 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
     Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 
     Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
-    
+
+     Route::middleware(['admin'])
+         ->prefix('admin')
+         ->name('admin')
+         ->namespace('Admin')
+         ->group( function() {
+             Route::get('/', 'IndexController@index')->name('dashboard');
+     });
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

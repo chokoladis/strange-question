@@ -34,13 +34,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('feedback.store') }}" method="POST"enctype="multipart/form-data">
+                        <form action="{{ route('feedback.store') }}" method="POST" enctype="multipart/form-data">
 
                             @csrf
                 
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.email') }}</label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="example@mail.ru" required>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="example@mail.ru" required>
                                 @if ($errors->has('email'))
                                     @foreach ($errors->get('email') as $item)
                                         <p class="error">{{ $item  }}</p>
@@ -50,7 +50,7 @@
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.phone') }}</label>
                                 {{-- js-phone --}}
-                                <input type="tel" name="phone" class="form-control js-phone-mask" 
+                                <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror js-phone-mask" 
                                     placeholder="7 901 234 5678" value="{{ old('phone') }}">
                                 @if ($errors->has('phone'))
                                     @foreach ($errors->get('phone') as $item)
@@ -60,7 +60,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.subject') }}</label>
-                                <select name="subject" class="form-select" required>
+                                <select name="subject" class="form-select @error('subject') is-invalid @enderror" required>
                                     @foreach(Feedback::SUBJECTS as $subject)
                                         <option>{{ $subject }}</option>
                                     @endforeach
@@ -68,7 +68,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.comment') }}</label>
-                                <textarea name="comment" class="form-control" cols="40" rows="3" required></textarea>
+                                <textarea name="comment" class="form-control @error('comment') is-invalid @enderror" cols="40" rows="3" required></textarea>
                             </div>
                             
                         </form>
