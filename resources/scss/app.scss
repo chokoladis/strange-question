@@ -160,6 +160,16 @@ footer{
     }
 }
 
+#system-alert{
+    position: fixed;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    width: 50%;
+    min-width: 200px;
+    margin: 0px auto;
+}
+
 .services_auth{
     display: flex;
     align-items: center;

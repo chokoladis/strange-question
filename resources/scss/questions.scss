@@ -1,3 +1,16 @@
+.index-page{
+
+    .img-col{
+        max-height: 200px;
+
+        img{
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}
+
 .detail-page{
 
     .title{

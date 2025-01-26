@@ -1,7 +1,11 @@
 @extends('layouts.app')
 
+@push('style')
+    @vite(['resources/scss/questions.scss'])
+@endpush
+
 @section('content')
-    <div class="page-questions container">
+    <div class="index-page container">
         @foreach ($questions as $question)
 
             @php
@@ -13,9 +17,9 @@
             @endphp
 
             <div class="item card mb-3 {{ $mainClass }} ">
-                <a href="{{ route('question.detail', $question->code) }}" class="row g-0">
-                    <div class="col-sm-4 col-md-3">
-                        <img src="{{ Storage::url('questions/'.$question->file?->path); }}" alt="" class="img-fluid rounded-start" style="object-fit: contain; height: 100%;">
+                <a href="{{ route('questions.detail', $question->code) }}" class="row g-0">
+                    <div class="img-col col-sm-4 col-md-3">
+                        <img src="{{ Storage::url('questions/'.$question->file?->path) }}" alt="" class="img-fluid rounded-start">
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
@@ -46,12 +50,10 @@
                                 </div>
                             @endif
                             
-
-                            
-                                <p class="card-text"><small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small></p>
-                                @if ($question->created_at != $question->updated_at)
-                                    <p class="card-text"><small class="text-body-secondary">{{ __('Изменен ') . $question->updated_at->diffForHumans() }}</small></p>
-                                @endif
+                            <p class="card-text"><small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small></p>
+                            @if ($question->created_at != $question->updated_at)
+                                <p class="card-text"><small class="text-body-secondary">{{ __('Изменен ') . $question->updated_at->diffForHumans() }}</small></p>
+                            @endif
                             
                         </div>
                     </div>

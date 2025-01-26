@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\FeedbackController;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,46 +17,41 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
 
     Route::get('/questions', 'QuestionController@index')->name('questions.index');
     Route::get('/categories', 'CategoryController@index')->name('categories.index');
+    Route::get('/categories/detail/{category}/', 'CategoryController@detail')->name('categories.detail');
+    Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
 
-    // Route::middleware(['auth'])->group( function() {
-
-        Route::group(['prefix' => 'categories', 'controller' => 'CategoryController'], function(){
-
-            Route::name('category.')->group(function(){
-                Route::get('/detail/{category}/', 'detail')->name('detail');
-                Route::get('/add', 'add')->name('add');
-                Route::post('/', 'store')->name('store');
-            });
-        }); 
+     Route::middleware(['auth'])->group( function() {
 
         Route::group(['prefix' => 'questions', 'controller' => 'QuestionController'], function(){
-
-            Route::name('question.')->group(function(){
-                Route::get('/detail/{question}/', 'detail')->name('detail');
+            Route::name('questions.')->group(function(){
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
             });
         });
 
         Route::group(['prefix' => 'comments', 'controller' => 'CommentController'], function(){
-
-            Route::name('comment.')->group(function(){
+            Route::name('comments.')->group(function(){
                 Route::post('/', 'store')->name('store');
             });
         });
 
-    // });
+//        admin
+
+         Route::middleware(['admin'])->group( function() {
+
+             Route::group(['prefix' => 'categories', 'controller' => 'CategoryController'], function() {
+                 Route::name('categories.')->group(function () {
+                     Route::get('/add', 'add')->name('add');
+                     Route::post('/', 'store')->name('store');
+                 });
+             });
+         });
+
+     });
     Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 
     Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
 
-     Route::middleware(['admin'])
-         ->prefix('admin')
-         ->name('admin')
-         ->namespace('Admin')
-         ->group( function() {
-             Route::get('/', 'IndexController@index')->name('dashboard');
-     });
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -39,7 +39,7 @@
 @endphp
 @section('content')
     <div class="container">
-        <form action="{{ route('question.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('questions.store') }}" method="POST" enctype="multipart/form-data">
 
             <h1>Мой вопрос - <b>...</b></h1>
 

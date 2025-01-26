@@ -33,7 +33,7 @@
                         foreach ($parents as $item){
                             $class = $lastElem == $item ? '' : 'me-3';
 
-                            echo '-> <a href="'. route("category.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
+                            echo '-> <a href="'. route("categories.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
                         }
                     }                        
                 @endphp
@@ -41,22 +41,24 @@
         </div>
 
         @if (!empty($daughters))
+
             <div class="daughters mt-4">
                 <h4>Подразделы</h4>
+
                 <div class="slider">
                     @foreach ($daughters as $item)
-                    
-                        
                         <div class="card" style="width: 18rem;">
                             <img src="{{ Storage::url('categories/'.$item->file?->path) }}" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $item->title }}</h5>
-                                <a href="{{ route('category.detail', $item->code) }}" class="btn btn-primary">link</a>
+                                <a href="{{ route('categories.detail', $item->code) }}" class="btn btn-primary">link</a>
                             </div>
                         </div>
                     @endforeach
                 </div>
+
             </div>
+
         @endif
     </div>
 @endsection

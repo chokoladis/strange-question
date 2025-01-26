@@ -46,7 +46,7 @@
         </div>
         
         @if (auth()->user())
-            <form action="{{ route('comment.store') }}" method="post">
+            <form action="{{ route('comments.store') }}" method="post" enctype="multipart/form-data">
 
                 <h4>Оставить комментарий</h4>
 

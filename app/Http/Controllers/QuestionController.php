@@ -7,8 +7,6 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Services\FileService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
 
 class QuestionController extends Controller
 {
@@ -27,9 +25,9 @@ class QuestionController extends Controller
 
     public function store(StoreRequest $request){
 
-
         $data = $request->validated();
-        $data['user_id'] = 1; // заглушка
+        $data['user_id'] = auth()->id();//user()->id; // заглушка
+        $data['active'] = $request->user()->can('isAdmin', auth()->user());
 
         try {
             if ($request->hasFile('img')){
@@ -46,6 +44,12 @@ class QuestionController extends Controller
             $question = Question::firstOrCreate([
                 'title' => $data['title']
             ],$data);
+
+            if ($question->wasRecentlyCreated){
+                return redirect()->route('questions.index')->with('message', 'Вопрос сохранен и будет опубликован позже');
+            } else {
+                return redirect()->back()->with('message', 'Такой вопрос уже задавали.');
+            }
         } catch (\Throwable $th) {
             throw $th;
         }

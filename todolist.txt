@@ -1,102 +1,13 @@
-навзания проекта!
----
-Что если задать странный вопрос?
-Странный вопрос
----
-
-======
-
-сделать
 
 category_id - question_id
 file_id - question_id
-3 выпадающих списка (category) с динамическими данными
+N* выпадающих списков (category) с динамическими данными
 отдельные таблицы file_categories, file_questions, file_users
-
---- ГОТОВО ---
-
-!!!СУЩНОСТЬ
-comments - комменты_
--id
--user_id
--text - коммент
--active - активность
-
-!!!СУЩНОСТЬ
-comment_user_status - коммент_лайки_дизлайк
--id
--comment_id
--user_id
--status(like or dislike)
-
-
-!!!СУЩНОСТЬ
-comments_reply - ответные комменты_
--id
--main_comment_id (& comments - id)
--reply_comment_id (& comments - id)
-
-
-***
-
-!!!СУЩНОСТЬ
-question - вопрос_
--id
--user_id
--title-заголовок
--active-активность
--right_comment_id - правильный ответ/решение(comment_id - айди коммента)
-++category_id (категория)
-++img - картинка
-
-***
-!!!СУЩНОСТЬ
-category - категория
--id
--category_parent_id
--title
--sort
--active
--img
-
-!!!СУЩНОСТЬ
-category_stats
--id
--category_id 
--views - кол-во просмотров
-
-!!!СУЩНОСТЬ
-question_stats - вопрос_статистика
--id
--question_id 
--views - кол-во просмотров
-
-
-!!!СУЩНОСТЬ
-question_likes - вопрос_лайки_дизлайки
--id
--comment_id
--user_id
--status(like or dislike)
-
-!!!СУЩНОСТЬ
-question_comments - вопрос_коммент_
--id
--question_id (& question)
--comment_id (& comments)
-
-
-- вход/регистрация ( интеграция с гугл + , яндекс + )
-- Страница - форма обратная связь
-
---- ГОТОВО ---
 
 ***
 ДОП.
 -Создание Вопросов происходит с рекапчей
-
--Ответы только от авторизованных и прошедших подтверждение почты 
-либо с рекапчей 
+-Ответы только от авторизованных и прошедших подтверждение почты с рекапчей
 и то и другое с модерацией админа
 
 - страница - донат/пожертвование (интеграция с банками, криптой)

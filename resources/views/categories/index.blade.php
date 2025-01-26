@@ -18,7 +18,7 @@
 
                     <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
                         <div class="card">
-                            <a href="{{ route('category.detail', $item->code ) }}">
+                            <a href="{{ route('categories.detail', $item->code ) }}">
                                 <img src="{{ $item->file ? Storage::url('categories/'.$item->file->path) : $SITE_NOPHOTO }}"
                                      alt="Картинка категории не найдена">
                                 <div class="card-body">

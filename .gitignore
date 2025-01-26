@@ -1,4 +1,9 @@
 /node_modules
 /vendor
+vendor/*
 /tests
 .env
+.idea
+*.xml
+*.DS_Store
+.vscode

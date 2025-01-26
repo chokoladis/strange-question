@@ -36,7 +36,7 @@
 
 @section('content')
     <div class="container">
-        <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data">
 
             @csrf
 
@@ -82,7 +82,6 @@
             </div>
             
             <button type="submit" class="btn btn-primary mb-3">{{ __('system.add') }}</button>
-            
         
         </form>
     </div>

@@ -8,7 +8,7 @@
 <div class="main_slider">
     @foreach ($slides as $slide)
         <div class="slide">
-            <a href="{{ route('question.detail', $slide->code) }}">
+            <a href="{{ route('questions.detail', $slide->code) }}">
                 <div class="bg">
                     @php
                         $path = $slide->file ? Storage::url('questions/'.$slide->file->path) : Storage::url('main/nophoto.jpg');

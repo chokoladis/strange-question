@@ -17,12 +17,12 @@
                     </div>
 
                     <div class="mt-5">
-                        <div class="copyright text-center">{{ __('develop by ') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024 y.') }}</div>
+                        <div class="copyright text-center">{{ __('develop by ') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025 years') }}</div>
                     </div>
                 </div>
             </footer>
         </div>
-        
+
         
         <!-- Modal -->
         {{-- do like component --}}
@@ -80,7 +80,22 @@
                 </div>
             </div>
         </div>
-        
+
+
+        @if (\Session::has('message'))
+            <div id="system-alert" class="alert alert-info" role="alert">
+                {!! \Session::get('message') !!}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <script>
+                (function (){
+                    setTimeout(function() {
+                        $('#system-alert').alert('close');
+                    },5000);
+                });
+            </script>
+        @endif
+
         @vite(['resources/js/app.js'])
         @stack('script')
     </body>

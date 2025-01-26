@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => 'require|string|max:2000',
+            'text' => 'required|string|max:2000',
             'comment_reply' => 'int|min:1',
         ];
     }

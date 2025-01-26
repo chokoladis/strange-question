@@ -15,7 +15,7 @@
             <img src="/storage/banner_1.png" alt="" class="bg">
             <h1 class="title">{{ __('Задай свой странный вопрос') }}</h1>
             <p>{{ __('и ты получишь странный ответ (:') }}</p>
-            <a href="{{ route('question.add') }}" class="btn btn-purple">{{ __('*чпонк') }}</a>
+            <a href="{{ route('questions.add') }}" class="btn btn-purple">{{ __('*чпонк') }}</a>
         </div>
     </div>
 @endsection
