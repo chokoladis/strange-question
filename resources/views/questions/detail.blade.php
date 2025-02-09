@@ -3,13 +3,24 @@
 @push('style')
     @vite(['resources/scss/questions.scss'])
 @endpush
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+@endpush
+
 
 @section('content')
     <div class="detail-page container">
         <div class="title">
             <div class="actions">
-                <div class="icon dislike"></div>
-                <div class="icon like"></div>
+{{--                js ajax --}}
+                <div class="icon like">
+                    <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
+                    {{ 22 }}
+                </div>
+                <div class="icon dislike">
+                    {{ 3 }}
+                    <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
+                </div>
             </div>
             <div class="description">
                 <img src="{{ $question->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"
@@ -71,7 +82,7 @@
 
                 <div class="mb-2 d-none">
                     <label class="form-label">{{ __('crud.comments.fields.comment_reply') }}</label>
-                    <input type="hidden" name="comment_reply" value="0">
+                    <input type="hidden" name="comment_reply" value="">
                     @if ($errors->has('comment_reply'))
                         @foreach ($errors->get('comment_reply') as $item)
                             <p class="error">{{ $item  }}</p>
@@ -80,7 +91,6 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary mb-3">{{ __('system.reply') }}</button>
-            
             </form>
         @endif
     </div>
