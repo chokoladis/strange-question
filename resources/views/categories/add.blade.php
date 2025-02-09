@@ -11,7 +11,7 @@
             $main = $arr['category'];
             $childs = $arr['items'];
 
-            $selected = old('category_parent_id') == $main['id'] ? 'selected' : '';
+            $selected = old('parent_id') == $main['id'] ? 'selected' : '';
 
             $html = '<option value="'.$main['id'].'" '.$selected.'>'.$line.$main['title'].'</option>';
 
@@ -23,7 +23,7 @@
                     if (isset($categories[$child['level']][$child['id']]['html'])){
                         $html .= $categories[$child['level']][$child['id']]['html'];
                     } else {
-                        $selected .= old('category_parent_id') == $child['id'] ? 'selected' : $selected;
+                        $selected .= old('parent_id') == $child['id'] ? 'selected' : $selected;
                         $html = '<option value="'.$child['id'].'" '.$selected.'>'.$line.$child['title'].'</option>';
                     }
                 }
@@ -41,8 +41,8 @@
             @csrf
 
             <div class="mb-3">
-                <label class="form-label">{{ __('crud.categories.fields.category_parent_id') }}</label>
-                <select name="category_parent_id" class="form-select">
+                <label class="form-label">{{ __('crud.categories.fields.parent_id') }}</label>
+                <select name="parent_id" class="form-select">
                     <option value="0" selected>{{ __('Без категории') }}</option>
                     @if (!empty($categories))
                         @foreach ($categories[0] as $arr)

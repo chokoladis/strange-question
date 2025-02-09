@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_parent_id' => 'int|nullable',
+            'parent_id' => 'int|nullable',
             'title' => 'required|string',
             'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ],
             'sort' => 'int|nullable'

@@ -65,59 +65,46 @@ class Category extends Model
 
         return Category::query()
             ->where('level', $catLevel)
-            ->where('category_parent_id', $categoryParentId)
+            ->where('parent_id', $categoryParentId)
             ->get()
             ->toArray();
+            // imgs
     }
 
-    public function getCurrCategoryChilds(){
-
-        // $category = $this;
-
-        $category_childs = Cache::remember($this->id.'_childs', self::$timeCache, function($category){
-            dd($category);
-
-            return Category::query()
-                ->where('active', 1)
-                // ->where('category_parent_id', $category->id)
-                ->get();
-        });
-
-        return $category_childs;
-    }
-
-    public function getParentsCategories(){
-
-        $collection = [];
-
-        if ($this->level > 0){
-
-            while(true){
-                $catLevel = isset($parent) && !empty($parent) ? $parent->level - 1 : $this->level - 1;
-                $parentId = isset($parent) && !empty($parent) ? $parent->category_parent_id : $this->category_parent_id;
-
-                if (!$parentId || $catLevel < 0){
-                    break;
-                }
-
-                $parent = isset($parent) && !empty($parent) 
-                    ? $parent->getParentCategories($catLevel, $parentId) 
-                    : $this->getParentCategories($catLevel, $parentId);
-
-                
-                $collection[] = $parent;
-            }
-        } 
-
-        return $collection;
-    }
-
-    public function getParentCategories(int $catLevel, int $parentId){
-
+    public function getNLevelChildByCategoryId()
+    {
         return Category::query()
-            ->where('level', $catLevel)
+            ->where('active', 1)
+            ->where('parent_id', $this->id)
+            ->where('level', $this->level + 1)
+            ->get();
+    }
+
+    public function getParents()
+    {
+        $arParents = [];
+        $queryResult = null;
+
+        while(true){
+            $parentId = !empty($queryResult) ? $queryResult->parent_id : $this->parent_id;
+            $level = !empty($queryResult) ? $queryResult->level - 1 : $this->level - 1;
+            if ($queryResult = $this->getParentById($parentId, $level)){
+                $arParents[] = $queryResult;
+            } else {
+                break;
+            }
+        }
+
+        return $arParents;
+    }
+
+    public function getParentById(int $parentId, int $level)
+    {
+        return Category::query()
+            ->where('active', 1)
             ->where('id', $parentId)
-            ->first();
+            ->where('level', $level)
+            ->get()->first();
     }
 
     public static function getActive(){

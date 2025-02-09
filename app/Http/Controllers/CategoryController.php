@@ -18,6 +18,7 @@ class CategoryController extends Controller
 
     public function detail($category){
         $category = Category::getElement($category);
+//        $childs = self::getCurrCategoryChilds($category);
         $childs = self::getCurrCategoryChilds($category);
         return view('categories.detail', compact('category', 'childs'));
     }
@@ -46,7 +47,11 @@ class CategoryController extends Controller
             }
             unset($data['img']);
 
-            // check role
+            if ($data['parent_id'] && intval($data['parent_id']) > 0){
+                $categoryParent = Category::query()->where('id', $data['parent_id'])->get(['level'])->first();
+                $data['level'] = $categoryParent->level + 1;
+            }
+
             $data['active'] = 1;
             
             $category = Category::firstOrCreate([ 'title' => $data['title'] ],$data);
@@ -60,13 +65,13 @@ class CategoryController extends Controller
 
     static function getCurrCategoryChilds(Category $category){
 
-        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function() use ($category){
+//        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function() use ($category){
 
-            return Category::query()
+        $category_childs =  Category::query()
                 ->where('active', 1)
-                ->where('category_parent_id', $category->id)
+                ->where('parent_id', $category->id)
                 ->get();
-        });
+//        });
 
         return $category_childs;
     }

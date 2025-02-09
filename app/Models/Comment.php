@@ -16,6 +16,11 @@ class Comment extends Model
 
     public $guarded = [];
 
+    public function getTable()
+    {
+        return 'comments';
+    }
+
     public function user_comments() : HasOne {
         
         return $this->HasOne(UserComments::class);

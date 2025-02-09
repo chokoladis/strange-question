@@ -1,5 +1,4 @@
 /node_modules
-/vendor
 vendor/*
 /tests
 .env
@@ -7,3 +6,4 @@ vendor/*
 *.xml
 *.DS_Store
 .vscode
+vendor

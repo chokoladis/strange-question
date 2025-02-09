@@ -3,9 +3,6 @@
 @push('style')
     @vite(['resources/css/slick.css', 'resources/css/slick-theme.css'])
 @endpush
-@push('script')
-    @vite(['resources/js/slick.min.js', 'resources/js/main.js'])
-@endpush
 
 @section('content')
     <div class="container">

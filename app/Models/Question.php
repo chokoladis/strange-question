@@ -110,6 +110,10 @@ class Question extends Model
         return $this->hasOne(QuestionStatistics::class, 'question_id', 'id');
     }
 
+    public function user() : HasOne {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
     // 
     public static function boot() {
 

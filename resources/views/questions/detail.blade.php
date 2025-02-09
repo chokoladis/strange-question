@@ -11,14 +11,21 @@
                 <div class="icon dislike"></div>
                 <div class="icon like"></div>
             </div>
-            <h1>{{ $question->title }}</h1>
+            <div class="description">
+                <img src="{{ $question->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"
+                     alt="...">
+                {{--во весь экран --}}
+                <div class="shadow"></div>
+                <h1>{{ $question->title }}</h1>
+            </div>
         </div>
         <div class="comments">
-            @if ($question?->right_comment_id)
+            @if ($question->right_comment_id)
                 <div class="answer">
                     <div class="user">
-                        <img src="{{ __('empty') }}" alt="">
-                        <p>{{ $question?->answer?->user->name }}</p>
+                        <img src="{{ $question->right_comment->user->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"
+                             alt="...">
+                        <p>{{ $question->answer->user->name }}</p>
                     </div>
                     <b>{{ mb_strlen($question?->answer->text) > 60 ? mb_substr($question->answer->text, 0, 60) : $question?->answer->text }}</b>
                 </div>

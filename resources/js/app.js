@@ -65,19 +65,19 @@ $(function(){
         // $('html').attr('')
     });
 
-    $('#modal-feedback [type="submit"]').on('click', function(){
-        let form = $('#modal-feedback form');
-        let action = form.attr('action');
-        let method = form.attr('method');
-        let formData = form.serializeArray();
-        let sendData = new FormData();
+    // $('#modal-feedback [type="submit"]').on('click', function(){
+    //     let form = $('#modal-feedback form');
+    //     let action = form.attr('action');
+    //     let method = form.attr('method');
+    //     let formData = form.serializeArray();
+    //     let sendData = new FormData();
 
-        $.each(formData, function (key, input) {
-            sendData.append(input.name, input.value);
-        });
+    //     $.each(formData, function (key, input) {
+    //         sendData.append(input.name, input.value);
+    //     });
 
-        sendAjax(action, method, sendData);
-    });
+    //     sendAjax(action, method, sendData);
+    // });
 
 });
 
