@@ -18,6 +18,10 @@ return new class extends Migration
             $table->index('user_id', 'questions_user_idx');
             $table->foreign('user_id', 'questions_user_fk')->references('id')->on('users')->cascadeOnDelete();
 
+            $table->unsignedBigInteger('category_id');
+            $table->index('category_id', 'questions_category_idx');
+            $table->foreign('category_id', 'questions_category_fk')->references('id')->on('category')->cascadeOnDelete();
+
             $table->unsignedBigInteger('file_id')->nullable();
             $table->index('file_id', 'questions_file_idx');
             $table->foreign('file_id', 'questions_file_fk')->references('id')->on('files')->cascadeOnDelete();

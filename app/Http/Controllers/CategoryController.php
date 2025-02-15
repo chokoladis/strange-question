@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Category\StoreRequest;
 use App\Models\Category;
 use App\Services\FileService;
+use App\Services\QuestionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,10 +18,12 @@ class CategoryController extends Controller
     }
 
     public function detail($category){
+
         $category = Category::getElement($category);
-//        $childs = self::getCurrCategoryChilds($category);
         $childs = self::getCurrCategoryChilds($category);
-        return view('categories.detail', compact('category', 'childs'));
+        $questions = QuestionService::getList(['active' => true, 'category_id' => $category->id]);
+
+        return view('categories.detail', compact('category', 'childs', 'questions'));
     }
 
     public function add(){

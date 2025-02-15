@@ -35,8 +35,9 @@ class Category extends Model
         return $categories;
     }
 
-    public static function getDaughtersCategories(){
-
+    public static function getDaughtersCategories()
+    {
+//    cache
         $categories = Category::query()->where('active', true)->orderBy('level', 'desc')->get();
 
         $arr = $res = [];
@@ -82,6 +83,7 @@ class Category extends Model
 
     public function getParents()
     {
+//        cache
         $arParents = [];
         $queryResult = null;
 
@@ -105,14 +107,6 @@ class Category extends Model
             ->where('id', $parentId)
             ->where('level', $level)
             ->get()->first();
-    }
-
-    public static function getActive(){
-
-        // use cache
-        $categories = Category::query()->where('active', true)->get();
-        
-        return $categories;
     }
 
     public static function getElement($code){

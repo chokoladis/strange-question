@@ -14,9 +14,14 @@ class Question extends Model
 
     public $guarded = [];
 
-    public static function getElement($code){
+    public static function getElement(string $code){
         // use cache 
-        return Question::where('code', $code)->where('active', true)->first();
+        if ($question = Question::where('code', $code)->where('active', true)->first()){
+            return [$question, null];
+        } else {
+            return [false, 'Вопрос не найден или не прошел модерацию'];
+        }
+
     }
 
     public static function getActive(){
@@ -93,9 +98,8 @@ class Question extends Model
 
     }
 
-    // 
     public function category() : HasOne {
-        return $this->hasOne(Category::class);
+        return $this->HasOne(Category::class, 'category_id', 'id');
     }
 
     public function question_comment() : HasMany {

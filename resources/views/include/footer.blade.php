@@ -2,23 +2,25 @@
                 use App\Models\Feedback;
             @endphp
             <footer>
-                <div class="container">
-                    <div class="row">
-                        <button type="button" class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#modal-feedback">
-                            {{ __('Обратная связь') }}
-                        </button>
-                    </div>
-                    <div class="row mt-5">
+                <div class="main">
+                    <div class="bg"></div>
+                    <div class="container">
+                        <div class="row">
+                            <button type="button" class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#modal-feedback">
+                                {{ __('Обратная связь') }}
+                            </button>
+                        </div>
+                        <div class="row mt-5">
                             <ul class="col-12">
                                 <li><a target="_blank" href="https://icons8.com/icon/p4rXi9HURgXT/help">иконки</a> от <a target="_blank" href="https://icons8.com">Icons8</a></li>
                                 <li><a href="https://www.flaticon.com/free-icons/moon" title="moon icons">Moon icons created by Good Ware - Flaticon</a></li>
                                 <li><a href="https://www.flaticon.com/free-icons/sun" title="sun icons">Sun icons created by Freepik - Flaticon</a></li>
                             </ul>
+                        </div>
                     </div>
-
-                    <div class="mt-5">
-                        <div class="copyright text-center">{{ __('develop by ') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025 years') }}</div>
-                    </div>
+                </div>
+                <div class="container">
+                    <div class="copyright text-center">{{ __('develop by ') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025 years') }}</div>
                 </div>
             </footer>
         </div>

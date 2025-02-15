@@ -56,8 +56,9 @@ class QuestionController extends Controller
     }
 
     public function detail($question){
-        $question = Question::getElement($question);
-        return view('questions.detail', compact('question'));
+        [$question, $error] = Question::getElement($question);
+
+        return view('questions.detail', compact('question', 'error'));
     }
 
     public static function findByUrl(string $url){

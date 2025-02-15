@@ -23,6 +23,13 @@
             object-fit: cover;
         }
     }
+    .questions_block{
+        margin-top: 20px;
+
+        .list-group{
+            margin-top: 15px;
+        }
+    }
 }
 
 select{

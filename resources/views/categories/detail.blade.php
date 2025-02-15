@@ -23,18 +23,21 @@
         <h1>{{ $title }}</h1>
 
         <div class="parents fw-light mt-4">
-            <mark>
-                <a href="{{ route("categories.index") }}">{{ __('Категории') }}</a>
-                @php
-                    if (!empty($parents)){
-                        foreach ($parents as $item){
-                            $class = $lastElem == $item ? '' : 'me-3';
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <a href="{{ route("categories.index") }}">{{ __('Категории') }}</a>
+                    </li>
 
-                            echo '-> <a href="'. route("categories.detail", $item->code) .'" class="'. $class .'">'. $item->title .'</a>';
-                        }
-                    }                        
-                @endphp
-            </mark>
+                    @if (!empty($parents))
+                        @foreach ($parents as $item)
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <a href="{{ route("categories.detail", $item->code) }}">{{ $item->title }}</a>
+                            </li>
+                        @endforeach
+                   @endif
+                </ol>
+            </nav>
         </div>
 
         @if (!empty($childs))
@@ -42,21 +45,31 @@
             <div class="daughters mt-4">
                 <h4>Подразделы</h4>
 
-                <div class="category_slider">
-                    @foreach ($childs as $item)
-                        <div class="card" style="width: 18rem;">
-                            <img src="{{ $item->file && $item->file->path ? Storage::url('categories/'.$item->file->path) : $SITE_NOPHOTO }}"
-                                 class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $item->title }}</h5>
-                                <a href="{{ route('categories.detail', $item->code) }}" class="btn btn-primary">link</a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
+                <x-category-slider :childs="$childs"></x-category-slider>
             </div>
 
+        @endif
+
+        @if (!empty($questions))
+            <div class="questions_block">
+                <h4>{{ __('Вопросы') }}</h4>
+                <div class="list-group">
+                    @foreach($questions as $question)
+                        <li class="list-group-item @if($question->right_comment_id) list-group-item-success @endif">
+                            <a href="{{ route('questions.detail', $question->code) }}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ $question->title }}</h5>
+                                    <small>{{ $question->created_at }}</small>
+                                </div>
+                            </a>
+                            <span class="badge rounded-pill {{ $question->comments > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">{{ $question->comments ?? 0 }}</span>
+                        </li>
+                    @endforeach
+                </div>
+                <div class="pagination">
+
+                </div>
+            </div>
         @endif
     </div>
 @endsection
