@@ -103,7 +103,9 @@ class Question extends Model
     }
 
     public function question_comment() : HasMany {
-        return $this->HasMany(QuestionComments::class, 'question_id', 'id');
+        return $this->HasMany(QuestionComments::class, 'question_id', 'id')
+            ->join('comments','question_comments.comment_id','=','comments.id')
+            ->where('comments.active', true);
     }
 
     public function file() : HasOne {

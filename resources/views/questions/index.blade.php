@@ -37,7 +37,7 @@
                             @endif
                             @if ($currentComment = $question->getCurrentUserComment())
                                 <div class="current-user-comment alert alert-success" role="alert">
-                                    <h5 class="alert-heading">{{ $currentComment->comment->user_comments->user->name }}</h4>
+                                    <h5 class="alert-heading">{{ $currentComment->comment->user->name }}</h5>
                                     <p class="mb-0">{{ $currentComment->comment->text }}</p>
                                 </div>  
                             @endif
@@ -45,7 +45,7 @@
                                 <div class="popular-answer alert alert-info" role="alert">
                                     <b class="alert-heading">{{ __('Самый популярный ответ') }}</b>
                                     <hr>
-                                    <h5>{{ $popularComment->user_comments->user->name }}</h5>
+                                    <h5>{{ $popularComment->user->name }}</h5>
                                     <p class="mb-0">{{ $popularComment->text }}</p>
                                 </div>
                             @endif

@@ -19,6 +19,7 @@ return [
     'comments' => [
         'fields' => [
             'text' => 'Коммент',
+            'comment_reply' => 'Вы ответите по комметарию'
         ]
     ],
     'feedback' => [

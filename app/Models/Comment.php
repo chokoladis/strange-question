@@ -21,16 +21,16 @@ class Comment extends Model
         return 'comments';
     }
 
-    public function user_comments() : HasOne {
-        
-        return $this->HasOne(UserComments::class);
+    public function user() : HasOne {
+        return $this->HasOne(User::class, 'id', 'user_id');
+    }
 
+    public function user_comment() : HasOne {
+        return $this->HasOne(UserComments::class);
     }
 
     public function user_statuses() : HasMany {
-        
         return $this->HasMany(CommentUserStatus::class);
-
     }
 
     public static function boot() {

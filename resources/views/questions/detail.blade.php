@@ -3,12 +3,13 @@
 @push('style')
     @vite(['resources/scss/questions.scss'])
 @endpush
-@push('scripts')
+@push('script')
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+    @vite(['resources/js/question.js'])
 @endpush
 
 @section('content')
-    <div class="detail-page container">
+    <div class="question-page container">
         @if($error)
             <div class="title error">
                 <div class="description">
@@ -59,9 +60,9 @@
                             <div class="main">
                                 <div class="user">
                                     <div class="icon"></div>
-                                    <b>{{ $item->comment->user_comments?->user->name }}</b>
+                                    <b>{{ $item->comment->user_comment->user->name }}</b>
                                 </div>
-                                <p>{{ empty($item->comment) ? 'Удаленный комментарий' : $item->comment->text }}</p>
+                                <p><i class="comment_id text-info">{{ '#'.$item->comment->id }}</i>{{ empty($item->comment) ? 'Удаленный комментарий' : $item->comment->text }}</p>
                                 <div class="under">
                                     <div class="btn btn-mini btn-link reply" data-comment="{{ $item->comment->id }}">{{ __('system.reply') }}</div>
                                 </div>
@@ -79,7 +80,6 @@
                     @csrf
 
                     <div class="mt-4 mb-2">
-                        <label class="form-label">{{ __('crud.comments.fields.text') }}</label>
                         <input type="text" name="text" class="form-control" placeholder="Не правильно ебаные волки, широкую на широкую!">
                         @if ($errors->has('text'))
                             @foreach ($errors->get('text') as $item)
@@ -88,11 +88,16 @@
                         @endif
                     </div>
 
-                    <div class="mb-2 d-none">
-                        <label class="form-label">{{ __('crud.comments.fields.comment_reply') }}</label>
-                        <input type="hidden" name="comment_reply" value="">
-                        @if ($errors->has('comment_reply'))
-                            @foreach ($errors->get('comment_reply') as $item)
+                    <div class="input-reply mb-2">
+
+                        <div class="description badge bg-secondary">
+                            <label class="form-label">{{ __('crud.comments.fields.comment_reply') }}</label>
+                            <p><i class="comment_id text-info"></i><b></b></p>
+                        </div>
+
+                        <input type="hidden" name="comment_reply_id" value="">
+                        @if ($errors->has('comment_reply_id'))
+                            @foreach ($errors->get('comment_reply_id') as $item)
                                 <p class="error">{{ $item  }}</p>
                             @endforeach
                         @endif
