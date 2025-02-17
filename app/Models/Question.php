@@ -99,7 +99,7 @@ class Question extends Model
     }
 
     public function category() : HasOne {
-        return $this->HasOne(Category::class, 'category_id', 'id');
+        return $this->HasOne(Category::class, 'id', 'category_id');
     }
 
     public function question_comment() : HasMany {

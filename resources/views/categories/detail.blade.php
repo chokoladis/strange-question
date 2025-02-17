@@ -62,7 +62,7 @@
                                     <small>{{ $question->created_at }}</small>
                                 </div>
                             </a>
-                            <span class="badge rounded-pill {{ $question->comments > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">{{ $question->comments ?? 0 }}</span>
+                            <span class="badge rounded-pill {{ count($question->question_comment) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">{{ count($question->question_comment) ?? 0 }}</span>
                         </li>
                     @endforeach
                 </div>

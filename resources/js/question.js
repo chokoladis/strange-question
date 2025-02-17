@@ -20,4 +20,8 @@ $(function(){
         $('.input-reply p b').text($(name_author).text());
     });
 
+    $('.actions .icon').on('click', function (){
+        let action = $(this).data('action');
+    });
+
 });

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @push('style')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css" />
     @vite(['resources/scss/questions.scss'])
 @endpush
 @push('script')
@@ -22,11 +23,11 @@
             <div class="title">
                 <div class="actions">
                     {{--                js ajax --}}
-                    <div class="icon like">
+                    <div class="icon like" data-action="like">
                         <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
                         {{ 22 }}
                     </div>
-                    <div class="icon dislike">
+                    <div class="icon dislike" data-action="dislike">
                         {{ 3 }}
                         <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
                     </div>
@@ -107,5 +108,8 @@
                 </form>
             @endif
         @endif
+        <div class="category">
+            <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
+        </div>
     </div>
 @endsection
