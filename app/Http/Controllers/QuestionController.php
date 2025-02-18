@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-// use Illuminate\Http\Request;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
+use App\Models\QuestionUserStatus;
 use App\Services\FileService;
 
 class QuestionController extends Controller
@@ -56,9 +56,17 @@ class QuestionController extends Controller
     }
 
     public function detail($question){
+        $arStatuses = $questionUserStatus = null;
+
         [$question, $error] = Question::getElement($question);
 
-        return view('questions.detail', compact('question', 'error'));
+        if ($question){
+//            service and cache
+            $arStatuses = QuestionUserStatus::getByQuestionId($question['id']);
+            $questionUserStatus = QuestionUserStatus::getByQuestionIdForUser($question['id']);
+        }
+
+        return view('questions.detail', compact('question', 'arStatuses', 'questionUserStatus', 'error'));
     }
 
     public static function findByUrl(string $url){

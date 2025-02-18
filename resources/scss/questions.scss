@@ -42,26 +42,36 @@
 
 
                 &.like{
-                    background: green;
                     margin-right: 5px;
 
+                    span{
+                        top: -2px;
+                    }
+                    b{
+                        bottom: -5px;
+                    }
                 }
                 &.dislike{
-                    background: red;
+                    span{
+                        bottom: -2px;
+                    }
+                    b{
+                        top: -5px;
+                    }
                 }
 
-                //&:before{
-                //    content: ">";
-                //    position: absolute;
-                //    left: 0;
-                //    right: 0;
-                //    top: 5px;
-                //    width: 15px;
-                //    height: 10px;
-                //    color: black;
-                //    transform: rotate(-90deg) scaleY(2.5);
-                //    margin: auto;
-                //}
+                span{
+                    position: absolute;
+                    width: fit-content;
+                    height: fit-content;
+                    z-index: 10;
+                    display: flex;
+                    justify-self: center;
+                }
+                b{
+                    position: relative;
+                    z-index: 2;
+                }
             }
         }
 
@@ -87,6 +97,7 @@
                 background: linear-gradient(rgba(0,0,0,0), rgba(0, 0, 0, 0.8));
             }
             h1{
+                color: white;
                 z-index: 10;
                 position: absolute;
                 left: 10px;

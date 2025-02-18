@@ -22,6 +22,33 @@ $(function(){
 
     $('.actions .icon').on('click', function (){
         let action = $(this).data('action');
+        let question_id = $(this).parents('.actions').find('#question_id').val();
+
+        if (action && question_id){
+            let sendData = new FormData();
+            sendData.append("status",action);
+            sendData.append("question_id",Number(question_id));
+
+            updUserStatus(sendData);
+        }
     });
+
+    async function updUserStatus(sendData){
+        try {
+            let settings = {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+                },
+                body: sendData,
+            };
+
+            let query = await fetch('/ajax/questionStatus', settings);
+            // let json = await query.json();
+            console.log(query);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 });

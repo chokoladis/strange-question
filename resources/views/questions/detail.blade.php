@@ -5,6 +5,7 @@
     @vite(['resources/scss/questions.scss'])
 @endpush
 @push('script')
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
     @vite(['resources/js/question.js'])
 @endpush
@@ -22,15 +23,28 @@
         @else
             <div class="title">
                 <div class="actions">
-                    {{--                js ajax --}}
-                    <div class="icon like" data-action="like">
-                        <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
-                        {{ 22 }}
-                    </div>
-                    <div class="icon dislike" data-action="dislike">
-                        {{ 3 }}
-                        <span class="uk-margin-small-right uk-icon" uk-icon="chevron-up"></span>
-                    </div>
+                    @if(auth()->id())
+                        <input type="hidden" id="question_id" value="{{ $question->id }}">
+                        <div class="icon like btn {{ $questionUserStatus['status'] === 'like' ? 'btn-success' : 'btn-outline-success' }}" data-action="like">
+                            <span class="uk-icon" uk-icon="chevron-up"></span>
+                            <b>{{ $arStatuses['likes'] ?? 0 }}</b>
+                        </div>
+                        <div class="icon dislike btn {{ $questionUserStatus['status'] === 'dislike' ? 'btn-danger' : 'btn-outline-danger' }}" data-action="dislike">
+                            <span class="uk-icon" uk-icon="chevron-down"></span>
+                            <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
+                        </div>
+                    @else
+                        <div class="icon like btn btn-outline-success">
+                            <span class="uk-icon" uk-icon="chevron-up"></span>
+                            <b>{{ $arStatuses['likes'] ?? 0 }}</b>
+                        </div>
+                        <div class="icon dislike btn btn-outline-danger">
+                            <span class="uk-icon" uk-icon="chevron-down"></span>
+                            <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
+                        </div>
+                    @endif
+{{--                    текущий юзер -статус --}}
+
                 </div>
                 <div class="description">
                     <img src="{{ $question->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"

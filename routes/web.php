@@ -35,6 +35,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
             });
         });
 
+        Route::post('/ajax/questionStatus', 'QuestionUserStatusController@set')->name('ajax.questionStatus');
 //        admin
 
          Route::middleware(['admin'])->group( function() {
