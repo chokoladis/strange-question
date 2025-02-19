@@ -31,4 +31,19 @@ class UserController extends Controller
         
         return $response;
     }
+
+    public function index(){
+        return view('profile.index');
+    }
+
+    public function update(){
+//
+        dd(1);
+        return view('profile.index');
+    }
+
+    public function setAvatar()
+    {
+        dd(2);
+    }
 }

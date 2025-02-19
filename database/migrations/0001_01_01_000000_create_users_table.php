@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name', 60);
             $table->string('role', 10)->default('user');
-            $table->string('profile_photo_path', 512)->nullable(); // todo 512?
             $table->boolean('active')->default(false); // todo for block
 
             $table->string('email')->unique();

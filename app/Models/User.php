@@ -54,4 +54,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function avatar()
+    {
+        return $this->hasOne(File::class, 'id', 'avatar');
+    }
 }

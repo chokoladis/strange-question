@@ -34,11 +34,11 @@
                             <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
                         </div>
                     @else
-                        <div class="icon like btn btn-outline-success">
+                        <div class="icon like btn btn-success">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
                             <b>{{ $arStatuses['likes'] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn btn-outline-danger">
+                        <div class="icon dislike btn btn-danger">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
                             <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
                         </div>
@@ -58,7 +58,7 @@
                 @if ($question->right_comment_id)
                     <div class="answer">
                         <div class="user">
-                            <img src="{{ $question->right_comment->user->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"
+                            <img src="{{ $question->right_comment->user->avatar ? Storage::url('users/'.$question->right_comment->user->avatar) : $SITE_NOPHOTO }}"
                                  alt="...">
                             <p>{{ $question->answer->user->name }}</p>
                         </div>
@@ -74,7 +74,9 @@
                             </div>
                             <div class="main">
                                 <div class="user">
-                                    <div class="icon"></div>
+                                    <div class="icon">
+                                        <img src="{{ $item->comment->user_comment->user->avatar ? Storage::url('users/'.$item->comment->user_comment->user->avatar->path) : $SITE_NOPHOTO }}" alt="">
+                                    </div>
                                     <b>{{ $item->comment->user_comment->user->name }}</b>
                                 </div>
                                 <p><i class="comment_id text-info">{{ '#'.$item->comment->id }}</i>{{ empty($item->comment) ? 'Удаленный комментарий' : $item->comment->text }}</p>

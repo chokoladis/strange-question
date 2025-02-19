@@ -35,6 +35,15 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
             });
         });
 
+         Route::group(['prefix' => 'profile', 'controller' => 'UserController'], function(){
+             Route::name('profile.')->group(function(){
+                 Route::get('/', 'index')->name('index');
+                 Route::post('/', 'update')->name('update');
+                 Route::post('/avatar', 'setAvatar')->name('setAvatar');
+             });
+         });
+
+
         Route::post('/ajax/questionStatus', 'QuestionUserStatusController@set')->name('ajax.questionStatus');
 //        admin
 
