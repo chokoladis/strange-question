@@ -120,6 +120,10 @@ class Question extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
+    public function user_statuses() : hasMany {
+        return $this->hasMany(QuestionUserStatus::class, 'id', 'question_id');
+    }
+
     // 
     public static function boot() {
 

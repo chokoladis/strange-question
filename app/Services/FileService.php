@@ -11,7 +11,8 @@ use App\Models\FileCategory;
 
 class FileService {
 
-    const MAX_FILE_SIZE = 3150000;
+    const MAX_FILE_SIZE = 3150000; //bites
+    const MAX_FILE_SIZE_KB = self::MAX_FILE_SIZE/1024;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
 
     public static function createThumbWebp(string $filePath){
@@ -54,17 +55,12 @@ class FileService {
     public static function save(UploadedFile $img, string $mainDir = 'main'){
         
         $root = public_path() . '/storage/' . $mainDir;
-
         $subDir = substr($img->hashName(), 0, 3 );
         
         try {
-            if (!is_dir($root)){
-                mkdir($root, 755);
-            }
-    
             $folder = $root.'/'.$subDir.'/';
             if (!is_dir($folder)){
-                mkdir($folder, 755);
+                mkdir($folder, 0755, TRUE);
             }
             
             $ext = $img->extension();

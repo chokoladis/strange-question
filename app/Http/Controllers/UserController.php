@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\User\SetAvatarRequest;
+use App\Models\User;
+use App\Services\FileService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cookie;
 
@@ -37,13 +39,27 @@ class UserController extends Controller
     }
 
     public function update(){
-//
+//        todo
         dd(1);
         return view('profile.index');
     }
 
-    public function setAvatar()
+    public function setAvatar(SetAvatarRequest $request)
     {
-        dd(2);
+//        todo
+        //        captcha
+        $file = $request->file('avatar');
+
+        if ($file->getError()){
+            return $file->getErrorMessage();
+        }
+
+        $avatar = FileService::save($file, 'users');
+
+        $user = User::find(auth()->id());
+        $user->avatar_id = $avatar->id;
+        $user->save();
+
+        return redirect()->route('profile.index');
     }
 }

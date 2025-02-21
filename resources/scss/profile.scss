@@ -10,7 +10,7 @@
 
       .card-body{
         position: relative;
-        top:  -70px;
+        top:  -75px;
         z-index: 1;
         width: 100%;
         height: 0;
@@ -19,19 +19,41 @@
         .btn{
           width: 100%;
         }
+
+        button[type="submit"]{
+          margin-top: 10px;
+          display: none;
+        }
+
+        &.active{
+          top: 0;
+          height: 150px;
+          padding: 16px;
+
+          button[type="submit"]{
+            display: block;
+          }
+        }
+      }
+
+      form.update-avatar{
+        display: flex;
+        flex-direction: column;
       }
 
       img{
         z-index: 2;
+        min-height: 100px;
+        min-width: 100px;
         max-width: 400px;
         max-height: 400px;
       }
 
       &:hover{
 
-        .card-body{
+        .card-body:not(.active){
           top: 0;
-          height: 69px;
+          height: 110px;
           padding: 16px;
         }
       }

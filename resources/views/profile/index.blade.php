@@ -5,7 +5,7 @@
 @endpush
 
 @push('script')
-    @vite(['resources/js/question.js'])
+    @vite(['resources/js/profile.js'])
 @endpush
 
 @php
@@ -18,7 +18,20 @@
             <div class="card avatar">
                 <img src="{{ $avatar ? Storage::url('users/'.$avatar->path) : $SITE_NOPHOTO }}" class="card-img-top">
                 <div class="card-body">
-                    <a class="btn btn-primary">{{ __('Изменить фото') }}</a>
+                    <form action="{{ route('profile.setAvatar') }}" class="update-avatar" method="POST" enctype="multipart/form-data">
+
+                        @csrf
+
+                        <label class="form-label">{{ __('crud.users.fields.avatar') }}</label>
+                        <input type="file" name="avatar" class="btn btn-primary" value="{{ __('Изменить фото') }}">
+                        @if ($errors->has('avatar'))
+                            @foreach ($errors->get('avatar') as $item)
+                                <p class="error">{{ $item  }}</p>
+                            @endforeach
+                        @endif
+
+                        <button type="submit" class="btn btn-success">{{ __('Изменить фото') }}</button>
+                    </form>
                 </div>
             </div>
             <form class="info"  action="{{ route('questions.store') }}" method="POST" enctype="multipart/form-data">

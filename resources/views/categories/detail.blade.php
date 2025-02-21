@@ -3,8 +3,13 @@
 @push('style')
     @vite(['resources/scss/categories.scss'])
 @endpush
-
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+@endpush
 @php
+    use App\Models\QuestionUserStatus;
+
     $parents = $category->getParents();
 
     $title = $category->title; 
@@ -55,14 +60,28 @@
                 <h4>{{ __('Вопросы') }}</h4>
                 <div class="list-group">
                     @foreach($questions as $question)
+                        @php
+                            $userReaction = QuestionUserStatus::getByQuestionId($question->id)
+                        @endphp
                         <li class="list-group-item @if($question->right_comment_id) list-group-item-success @endif">
+                            <div class="reaction">
+                                <div class="badge text-bg-success">
+                                    <span class="uk-icon" uk-icon="chevron-up"></span>
+                                    <b>{{ $userReaction['likes'] }}</b>
+                                </div>
+                                <div class="badge text-bg-danger">
+                                    <span class="uk-icon" uk-icon="chevron-down"></span>
+                                    <b>{{ $userReaction['dislikes'] }}</b>
+                                </div>
+                            </div>
                             <a href="{{ route('questions.detail', $question->code) }}">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">{{ $question->title }}</h5>
                                     <small>{{ $question->created_at }}</small>
                                 </div>
                             </a>
-                            <span class="badge rounded-pill {{ count($question->question_comment) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">{{ count($question->question_comment) ?? 0 }}</span>
+                            <span class="comments-count badge rounded-pill {{ count($question->question_comment) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">
+                                {{ __('Ответов ('.(count($question->question_comment) ?? 0).')') }}</span>
                         </li>
                     @endforeach
                 </div>

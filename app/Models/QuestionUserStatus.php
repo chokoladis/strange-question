@@ -14,6 +14,7 @@ class QuestionUserStatus extends Model
 
     public static function getByQuestionId(int $id)
     {
+//        cache , to service
         return self::query()
             ->select(
                 DB::raw('(SELECT COUNT(status) from `question_user_statuses` WHERE status = "like" && `question_id` ='.$id.') as likes'),

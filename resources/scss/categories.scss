@@ -28,6 +28,26 @@
 
         .list-group{
             margin-top: 15px;
+
+            .reaction{
+                margin-bottom: 7px;
+
+                .badge{
+                    padding: 2px 5px;
+
+                    svg{
+                        width: 15px;
+
+                        *{
+                            stroke: white;
+                        }
+                    }
+                }
+            }
+
+            .comments-count{
+                margin-top: 10px;
+            }
         }
     }
 }

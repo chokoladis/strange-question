@@ -57,6 +57,9 @@ class User extends Authenticatable
 
     public function avatar()
     {
-        return $this->hasOne(File::class, 'id', 'avatar');
+        return $this->hasOne(File::class, 'id', 'avatar_id');
     }
+
+//    todo
+//    upd check avatar old
 }
