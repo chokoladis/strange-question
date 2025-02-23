@@ -55,9 +55,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function avatar()
+    public function photo()
     {
-        return $this->hasOne(File::class, 'id', 'avatar_id');
+        return $this->hasOne(File::class, 'id', 'photo_id');
     }
 
 //    todo

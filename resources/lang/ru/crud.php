@@ -29,6 +29,12 @@ return [
             'subject' => 'Тема',
             'comment' => 'Комментарий'
         ]
+    ],
+    'users' => [
+        'fields' => [
+            'name' => 'Имя',
+            'photo' => 'Фото',
+        ]
     ]
 ];
 

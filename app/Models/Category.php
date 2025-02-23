@@ -122,6 +122,12 @@ class Category extends Model
         return $this->morphTo();
     }
 
+    public function stats()
+    {
+//        todo
+        return $this->hasOne(CategoryStats::class, 'category_id', 'id');
+    }
+
     public static function boot() {
 
         parent::boot();

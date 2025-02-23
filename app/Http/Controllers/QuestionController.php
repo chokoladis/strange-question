@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ViewEvent;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
@@ -56,11 +57,15 @@ class QuestionController extends Controller
     }
 
     public function detail($question){
+
         $arStatuses = $questionUserStatus = null;
 
         [$question, $error] = Question::getElement($question);
 
         if ($question){
+
+            Event(new ViewEvent($question));
+
 //            service and cache
             $arStatuses = QuestionUserStatus::getByQuestionId($question['id']);
             $questionUserStatus = QuestionUserStatus::getByQuestionIdForUser($question['id']);

@@ -29,9 +29,14 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
             });
         });
 
-        Route::group(['prefix' => 'comments', 'controller' => 'CommentController'], function(){
+        Route::group(['prefix' => 'comments'],function(){
             Route::name('comments.')->group(function(){
-                Route::post('/', 'store')->name('store');
+                Route::group( ['controller' => 'CommentController'], function (){
+                    Route::post('/', 'store')->name('store');
+                });
+                Route::group(['controller' => 'CommentUserStatusController'], function (){
+                    Route::post('/status', 'setStatus')->name('status.set');
+                });
             });
         });
 
@@ -39,7 +44,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
              Route::name('profile.')->group(function(){
                  Route::get('/', 'index')->name('index');
                  Route::post('/', 'update')->name('update');
-                 Route::post('/avatar', 'setAvatar')->name('setAvatar');
+                 Route::post('/photo', 'setPhoto')->name('setPhoto');
              });
          });
 

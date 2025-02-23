@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\SetAvatarRequest;
+use App\Http\Requests\User\SetPhotoRequest;
+use App\Http\Requests\User\UpdateRequest;
 use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Http\Response;
@@ -38,26 +39,30 @@ class UserController extends Controller
         return view('profile.index');
     }
 
-    public function update(){
-//        todo
-        dd(1);
-        return view('profile.index');
+    public function update(UpdateRequest $request){
+
+        $data = $request->validated();
+        $user = User::find(auth()->id());
+        $user->update($data);
+
+        return redirect()->route('profile.index');
     }
 
-    public function setAvatar(SetAvatarRequest $request)
+    public function setPhoto(SetPhotoRequest $request)
     {
-//        todo
+        //        отправить нейронке на модерацию
+        //        todo
         //        captcha
-        $file = $request->file('avatar');
+        $file = $request->file('photo');
 
         if ($file->getError()){
             return $file->getErrorMessage();
         }
 
-        $avatar = FileService::save($file, 'users');
+        $photo = FileService::save($file, 'users');
 
         $user = User::find(auth()->id());
-        $user->avatar_id = $avatar->id;
+        $user->photo_id = $photo->id;
         $user->save();
 
         return redirect()->route('profile.index');

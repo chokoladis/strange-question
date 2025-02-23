@@ -3,10 +3,11 @@
   .main{
     display: flex;
 
-    .avatar{
+    .photo{
       width: fit-content;
       margin-right: 10px;
       position: relative;
+      overflow: hidden;
 
       .card-body{
         position: relative;

@@ -1,4 +1,4 @@
-$('.profile-page form.update-avatar input').on('change', function (){
+$('.profile-page form.update-photo input').on('change', function (){
     if ($(this)[0].files.length){
         $(this).parents('.card-body').addClass('active');
     } else {

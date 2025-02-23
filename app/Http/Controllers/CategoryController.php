@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ViewEvent;
 use App\Http\Requests\Category\StoreRequest;
 use App\Models\Category;
 use App\Services\FileService;
 use App\Services\QuestionService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
@@ -18,6 +18,8 @@ class CategoryController extends Controller
     }
 
     public function detail($category){
+
+        Event(new ViewEvent($category));
 
         $category = Category::getElement($category);
         $childs = self::getCurrCategoryChilds($category);

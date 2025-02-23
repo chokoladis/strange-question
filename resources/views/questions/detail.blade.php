@@ -23,13 +23,17 @@
         @else
             <div class="title">
                 <div class="actions">
+                    @php
+                        $currentReaction = !empty($questionUserStatus) ? $questionUserStatus['status'] : '';
+                    @endphp
                     @if(auth()->id())
+{{--                        todo boostrap icons ?--}}
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
-                        <div class="icon like btn {{ $questionUserStatus['status'] === 'like' ? 'btn-success' : 'btn-outline-success' }}" data-action="like">
+                        <div class="icon like btn {{ $currentReaction === 'like' ? 'btn-success' : 'btn-outline-success' }}" data-action="like">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
                             <b>{{ $arStatuses['likes'] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn {{ $questionUserStatus['status'] === 'dislike' ? 'btn-danger' : 'btn-outline-danger' }}" data-action="dislike">
+                        <div class="icon dislike btn {{ $currentReaction === 'dislike' ? 'btn-danger' : 'btn-outline-danger' }}" data-action="dislike">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
                             <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
                         </div>
@@ -54,11 +58,30 @@
                     <h1>{{ $question->title }}</h1>
                 </div>
             </div>
+            <div class="info">
+                <div class="date">
+                    <div class="create">
+                        <span uk-icon="calendar"></span>
+                        <i>{{ $question->created_at }}</i>
+                    </div>
+
+                    @if($question->created_at != $question->updated_at)
+                        <div class="update">
+                            <span uk-icon="pencil">{{ $question->updated_at }}</span>
+                            <i>{{ $question->updated_at }}</i>
+                        </div>
+                    @endif
+                </div>
+                <div class="views">
+                    <span uk-icon="eye"></span>
+                    <i>{{ $question->statistics->views }}</i>
+                </div>
+            </div>
             <div class="comments">
                 @if ($question->right_comment_id)
                     <div class="answer">
                         <div class="user">
-                            <img src="{{ $question->right_comment->user->avatar ? Storage::url('users/'.$question->right_comment->user->avatar) : $SITE_NOPHOTO }}"
+                            <img src="{{ $question->right_comment->user->photo ? Storage::url('users/'.$question->right_comment->user->photo->path) : $SITE_NOPHOTO }}"
                                  alt="...">
                             <p>{{ $question->answer->user->name }}</p>
                         </div>
@@ -68,14 +91,13 @@
                 @if($question->question_comment)
                     @foreach ($question->question_comment as $item)
                         <div class="comment {{ empty($item->comment) ? 'deleted' : '' }}">
-                            <div class="actions">
-                                <div class="icon dislike"></div>
-                                <div class="icon like"></div>
-                            </div>
+
+                            <x-comment.rating :comment="$item->comment"></x-comment.rating>
+
                             <div class="main">
                                 <div class="user">
                                     <div class="icon">
-                                        <img src="{{ $item->comment->user_comment->user->avatar ? Storage::url('users/'.$item->comment->user_comment->user->avatar->path) : $SITE_NOPHOTO }}" alt="">
+                                        <img src="{{ $item->comment->user_comment->user->photo ? Storage::url('users/'.$item->comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
                                     </div>
                                     <b>{{ $item->comment->user_comment->user->name }}</b>
                                 </div>

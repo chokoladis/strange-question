@@ -113,17 +113,109 @@
         }
     }
 
+    .info{
+        margin-top: 15px;
+
+        * {
+            color: rgba(255,255,255,0.7);
+        }
+        i{
+            font-size:14px;
+        }
+        span{
+            margin-right: 5px;
+        }
+
+        .date{
+            display: flex;
+
+            > *{
+                display: flex;
+            }
+
+            .create{
+                margin-right: 10px;
+            }
+        }
+        .views{
+            display: flex;
+            margin-top: 5px;
+        }
+    }
+
     .comments{
         width: 90%;
         border-top: 2px solid rgb(212, 212,212);
-        margin: 20px 0;
+        margin: 30px 0;
         margin-left: auto;
 
         .comment {
             padding-top: 10px;
             display: flex;
-            border-bottom: 1px solid rgb(240, 240,240); 
+            border-bottom: 1px solid rgb(240, 240,240);
+            position: relative;
 
+            .action_rating{
+                width: fit-content;
+                height: fit-content;
+                display: flex;
+                flex-direction: column;
+
+                align-items: center;
+                position: absolute;
+                left: -50px;
+                top: 10px;
+                z-index: 10;
+
+                .icon {
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    cursor: pointer;
+                    width: 30px;
+                    height: 30px;
+
+                    &.icon-circle{
+                        display: flex;
+                        align-items: center;
+                        border-radius: 30px;
+                        overflow: hidden;
+                        justify-content: center;
+                    }
+                    &.plus{
+                        background: #0f5132;
+                        //background: green;
+                    }
+                    &.minus{
+                        background: #b02a37;
+                        //background: red;
+                    }
+
+                    input{
+                        display: none;
+                    }
+                }
+
+                .rating{
+                    margin: 8px 0;
+
+                    b{
+                        text-transform: uppercase;
+                        font-size: 14px;
+                        position: relative;
+                        z-index: 2;
+                    }
+                }
+            }
+
+            .main{
+                .user{
+                    .icon{
+                        max-width: 60px;
+                        max-height: 60px;
+                    }
+                }
+            }
             b{
                 font-size: 16px;
                 font-weight: 900;
@@ -137,7 +229,7 @@
         }
     }
 
-    form{
+    > form{
         margin-top: 40px;
 
         .input-reply{

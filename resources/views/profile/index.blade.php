@@ -10,22 +10,22 @@
 
 @php
     $user = auth()->user();
-    $avatar = $user->avatar;
+    $photo = $user->photo;
 @endphp
 @section('content')
     <div class="profile-page container">
         <div class="main">
-            <div class="card avatar">
-                <img src="{{ $avatar ? Storage::url('users/'.$avatar->path) : $SITE_NOPHOTO }}" class="card-img-top">
+            <div class="card photo">
+                <img src="{{ $photo ? Storage::url('users/'.$photo->path) : $SITE_NOPHOTO }}" class="card-img-top">
                 <div class="card-body">
-                    <form action="{{ route('profile.setAvatar') }}" class="update-avatar" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST" enctype="multipart/form-data">
 
                         @csrf
 
-                        <label class="form-label">{{ __('crud.users.fields.avatar') }}</label>
-                        <input type="file" name="avatar" class="btn btn-primary" value="{{ __('Изменить фото') }}">
-                        @if ($errors->has('avatar'))
-                            @foreach ($errors->get('avatar') as $item)
+                        <label class="form-label">{{ __('crud.users.fields.photo') }}</label>
+                        <input type="file" name="photo" class="btn btn-primary" value="{{ __('Изменить фото') }}">
+                        @if ($errors->has('photo'))
+                            @foreach ($errors->get('photo') as $item)
                                 <p class="error">{{ $item  }}</p>
                             @endforeach
                         @endif
@@ -34,7 +34,7 @@
                     </form>
                 </div>
             </div>
-            <form class="info"  action="{{ route('questions.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('profile.update') }}" class="info" method="POST" enctype="multipart/form-data">
 
                 @csrf
 

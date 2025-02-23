@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Comment;
 
-use App\Services\FileService;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SetAvatarRequest extends FormRequest
+class UserStatusStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +22,8 @@ class SetAvatarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:'.FileService::MAX_FILE_SIZE_KB],
+            'comment_id' => ['required', 'integer', 'exists:comments,id'],
+            'action' => ['required', 'integer', 'min:-1', 'max:1'],
         ];
     }
 }

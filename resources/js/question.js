@@ -51,4 +51,35 @@ $(function(){
         }
     }
 
+    $('.question-page form.action_rating .icon').on('click', function () {
+        let form = $(this).parents('form');
+        let action = form.attr('action');
+
+        let comment_id = form.find('[name="comment_id"]').val();
+        let sendData = new FormData();
+
+        sendData.append("comment_id",Number(comment_id));
+        sendData.append("action",Number($(this).data('action')));
+
+        setCommentRating(action, sendData);
+    });
+
+    async function setCommentRating(action, sendData){
+        try {
+            let settings = {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+                },
+                body: sendData,
+            };
+
+            let query = await fetch(action, settings);
+            // let json = await query.json();
+            console.log(query);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 });

@@ -29,8 +29,12 @@ class Comment extends Model
         return $this->HasOne(UserComments::class);
     }
 
-    public function user_statuses() : HasMany {
-        return $this->HasMany(CommentUserStatus::class);
+    public function getRating() {
+        return $this->newQuery()
+            ->where('comments.id', $this->id)
+            ->join('comment_user_statuses as t_statuses','comments.id','=', 'comment_id')
+            ->selectRaw('SUM(t_statuses.status) as rating')
+            ->first();
     }
 
     public static function boot() {

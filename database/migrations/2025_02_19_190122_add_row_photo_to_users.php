@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('avatar_id')->nullable()->after('active');
-            $table->index('avatar_id', 'users_avatar_idx');
-            $table->foreign('avatar_id', 'users_files_fk')->references('id')->on('files');
+            $table->unsignedBigInteger('photo_id')->nullable()->after('active');
+            $table->index('photo_id', 'users_photo_idx');
+            $table->foreign('photo_id', 'users_files_fk')->references('id')->on('files');
         });
     }
 
