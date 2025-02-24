@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Database\Schema\Grammars\MySqlGrammar;
+use Illuminate\Database\Schema\Grammars\SQLiteGrammar;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Traits\Macroable;
 
@@ -79,6 +81,13 @@ class Blueprint
     public $after;
 
     /**
+     * The blueprint state instance.
+     *
+     * @var \Illuminate\Database\Schema\BlueprintState|null
+     */
+    protected $state;
+
+    /**
      * Create a new schema blueprint.
      *
      * @param  string  $table
@@ -136,6 +145,10 @@ class Blueprint
             $method = 'compile'.ucfirst($command->name);
 
             if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
+                if ($this->hasState()) {
+                    $this->state->update($command);
+                }
+
                 if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $sql);
                 }
@@ -161,12 +174,14 @@ class Blueprint
     /**
      * Get all of the commands matching the given names.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  array  $names
      * @return \Illuminate\Support\Collection
      */
     protected function commandsNamed(array $names)
     {
-        return collect($this->commands)->filter(function ($command) use ($names) {
+        return (new Collection($this->commands))->filter(function ($command) use ($names) {
             return in_array($command->name, $names);
         });
     }
@@ -180,17 +195,20 @@ class Blueprint
      */
     protected function addImpliedCommands(Connection $connection, Grammar $grammar)
     {
-        if (count($this->getAddedColumns()) > 0 && ! $this->creating()) {
-            array_unshift($this->commands, $this->createCommand('add'));
-        }
-
-        if (count($this->getChangedColumns()) > 0 && ! $this->creating()) {
-            array_unshift($this->commands, $this->createCommand('change'));
-        }
-
         $this->addFluentIndexes($connection, $grammar);
 
         $this->addFluentCommands($connection, $grammar);
+
+        if (! $this->creating()) {
+            $this->commands = array_map(
+                fn ($command) => $command instanceof ColumnDefinition
+                    ? $this->createCommand($command->change ? 'change' : 'add', ['column' => $command])
+                    : $command,
+                $this->commands
+            );
+
+            $this->addAlterCommands($connection, $grammar);
+        }
     }
 
     /**
@@ -261,14 +279,56 @@ class Blueprint
     }
 
     /**
+     * Add the alter commands if whenever needed.
+     *
+     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
+     */
+    public function addAlterCommands(Connection $connection, Grammar $grammar)
+    {
+        if (! $grammar instanceof SQLiteGrammar) {
+            return;
+        }
+
+        $alterCommands = $grammar->getAlterCommands($connection);
+
+        [$commands, $lastCommandWasAlter, $hasAlterCommand] = [
+            [], false, false,
+        ];
+
+        foreach ($this->commands as $command) {
+            if (in_array($command->name, $alterCommands)) {
+                $hasAlterCommand = true;
+                $lastCommandWasAlter = true;
+            } elseif ($lastCommandWasAlter) {
+                $commands[] = $this->createCommand('alter');
+                $lastCommandWasAlter = false;
+            }
+
+            $commands[] = $command;
+        }
+
+        if ($lastCommandWasAlter) {
+            $commands[] = $this->createCommand('alter');
+        }
+
+        if ($hasAlterCommand) {
+            $this->state = new BlueprintState($this, $connection, $grammar);
+        }
+
+        $this->commands = $commands;
+    }
+
+    /**
      * Determine if the blueprint has a create command.
      *
      * @return bool
      */
     public function creating()
     {
-        return collect($this->commands)->contains(function ($command) {
-            return $command->name === 'create';
+        return (new Collection($this->commands))->contains(function ($command) {
+            return ! $command instanceof ColumnDefinition && $command->name === 'create';
         });
     }
 
@@ -620,7 +680,7 @@ class Blueprint
     }
 
     /**
-     * Specify an fulltext for the table.
+     * Specify a fulltext index for the table.
      *
      * @param  string|array  $columns
      * @param  string|null  $name
@@ -979,17 +1039,23 @@ class Blueprint
 
         $column = $column ?: $model->getForeignKey();
 
-        if ($model->getKeyType() === 'int' && $model->getIncrementing()) {
-            return $this->foreignId($column);
+        if ($model->getKeyType() === 'int') {
+            return $this->foreignId($column)
+                ->table($model->getTable())
+                ->referencesModelColumn($model->getKeyName());
         }
 
         $modelTraits = class_uses_recursive($model);
 
         if (in_array(HasUlids::class, $modelTraits, true)) {
-            return $this->foreignUlid($column);
+            return $this->foreignUlid($column, 26)
+                ->table($model->getTable())
+                ->referencesModelColumn($model->getKeyName());
         }
 
-        return $this->foreignUuid($column);
+        return $this->foreignUuid($column)
+            ->table($model->getTable())
+            ->referencesModelColumn($model->getKeyName());
     }
 
     /**
@@ -1394,6 +1460,20 @@ class Blueprint
     }
 
     /**
+     * Create a new vector column on the table.
+     *
+     * @param  string  $column
+     * @param  int|null  $dimensions
+     * @return \Illuminate\Database\Schema\ColumnDefinition
+     */
+    public function vector($column, $dimensions = null)
+    {
+        $options = $dimensions ? compact('dimensions') : [];
+
+        return $this->addColumn('vector', $column, $options);
+    }
+
+    /**
      * Add the proper columns for a polymorphic table.
      *
      * @param  string  $name
@@ -1526,13 +1606,25 @@ class Blueprint
     }
 
     /**
-     * Adds the `remember_token` column to the table.
+     * Add the `remember_token` column to the table.
      *
      * @return \Illuminate\Database\Schema\ColumnDefinition
      */
     public function rememberToken()
     {
         return $this->string('remember_token', 100)->nullable();
+    }
+
+    /**
+     * Create a new custom column on the table.
+     *
+     * @param  string  $column
+     * @param  string  $definition
+     * @return \Illuminate\Database\Schema\ColumnDefinition
+     */
+    public function rawColumn($column, $definition)
+    {
+        return $this->addColumn('raw', $column, compact('definition'));
     }
 
     /**
@@ -1634,6 +1726,10 @@ class Blueprint
     {
         $this->columns[] = $definition;
 
+        if (! $this->creating()) {
+            $this->commands[] = $definition;
+        }
+
         if ($this->after) {
             $definition->after($this->after);
 
@@ -1669,6 +1765,10 @@ class Blueprint
     {
         $this->columns = array_values(array_filter($this->columns, function ($c) use ($name) {
             return $c['name'] != $name;
+        }));
+
+        $this->commands = array_values(array_filter($this->commands, function ($c) use ($name) {
+            return ! $c instanceof ColumnDefinition || $c['name'] != $name;
         }));
 
         return $this;
@@ -1741,6 +1841,27 @@ class Blueprint
     }
 
     /**
+     * Determine if the blueprint has state.
+     *
+     * @param  mixed  $name
+     * @return bool
+     */
+    private function hasState(): bool
+    {
+        return ! is_null($this->state);
+    }
+
+    /**
+     * Get the state of the blueprint.
+     *
+     * @return \Illuminate\Database\Schema\BlueprintState
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
      * Get the columns on the blueprint that should be added.
      *
      * @return \Illuminate\Database\Schema\ColumnDefinition[]
@@ -1754,6 +1875,8 @@ class Blueprint
 
     /**
      * Get the columns on the blueprint that should be changed.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @return \Illuminate\Database\Schema\ColumnDefinition[]
      */

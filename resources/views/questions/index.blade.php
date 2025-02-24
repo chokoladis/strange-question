@@ -3,17 +3,17 @@
 @push('style')
     @vite(['resources/scss/questions.scss'])
 @endpush
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+@endpush
 
 @section('content')
     <div class="index-page container">
         @foreach ($questions as $question)
 
             @php
-                if ($question->right_comment_id){
-                    $mainClass = 'border-success';
-                } else {
-                    $mainClass = '';
-                }
+                $mainClass = $question->right_comment_id ? 'border-success' : '';
             @endphp
 
             <div class="item card mb-3 {{ $mainClass }} ">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $question->title }}</h5>
+                            <h4 class="card-title">{{ $question->title }}</h4>
 
                             @if ($question->right_comment_id)
                                 <div class="answer card-text">
@@ -42,11 +42,12 @@
                                 </div>  
                             @endif
                             @if ($popularComment = $question->getPopularComment())
-                                <div class="popular-answer alert alert-info" role="alert">
-                                    <b class="alert-heading">{{ __('Самый популярный ответ') }}</b>
-                                    <hr>
-                                    <h5>{{ $popularComment->user->name }}</h5>
-                                    <p class="mb-0">{{ $popularComment->text }}</p>
+                                <div class="popular-answer alert alert-warning" role="alert">
+                                    <i uk-icon="bolt"></i>
+                                    <div class="content">
+                                        <h5>{{ $popularComment->user->name }}</h5>
+                                        <p class="mb-0">{{ $popularComment->text }}</p>
+                                    </div>
                                 </div>
                             @endif
                             

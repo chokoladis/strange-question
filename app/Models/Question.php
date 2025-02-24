@@ -65,11 +65,19 @@ class Question extends Model
 
         if ($this->question_comment){
 
+            // todo deficlt sql
             $query = QuestionComments::where('question_id',$this->id)
                 ->join('comment_user_statuses as statuses','question_comments.comment_id','=','statuses.comment_id')
                 ->select(['statuses.status','statuses.comment_id'])
-                // ->groupBy('statuses.comment_id')
                 ->get();
+
+//            $query = QuestionComments::query()
+//                ->where('question_id',$this->id)
+////                ->where('question_comments.question_id', $this->id)
+//                ->join('comment_user_statuses as statuses','question_comments.comment_id','=','statuses.comment_id')
+//                ->select(['question_comments.id', 'question_comments.comment_id', 'statuses.status','statuses.comment_id'])
+//                // ->groupBy('statuses.comment_id')
+//                ->get();
 
             $comments = [];
 
@@ -78,15 +86,15 @@ class Question extends Model
 
                     if (!isset($comments[$comment->comment_id]))
                         $comments[$comment->comment_id] = 0;
-    
+
                     $plus = $comment->status === 'like' ? 1 : -1;
-    
-                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $plus;                
+
+                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $plus;
                 }
 
                 $popularCommentId = array_search(max($comments), $comments);
 
-                $popularComment = Comment::query('id', $popularCommentId)->first();
+                $popularComment = Comment::query()->where('id', $popularCommentId)->first();
 
                 return $popularComment;
             }

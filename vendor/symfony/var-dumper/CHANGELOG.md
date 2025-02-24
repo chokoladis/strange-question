@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+7.2
+---
+
+ * Add support for `FORCE_COLOR` environment variable
+ * Add support for virtual properties
+
+7.1
+---
+
+ * Add support for new DOM extension classes in `DOMCaster`
+
 7.0
 ---
 

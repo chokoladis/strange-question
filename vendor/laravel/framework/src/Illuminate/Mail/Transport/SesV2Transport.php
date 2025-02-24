@@ -4,6 +4,7 @@ namespace Illuminate\Mail\Transport;
 
 use Aws\Exception\AwsException;
 use Aws\SesV2\SesV2Client;
+use Illuminate\Support\Collection;
 use Stringable;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Header\MetadataHeader;
@@ -56,7 +57,7 @@ class SesV2Transport extends AbstractTransport implements Stringable
 
             foreach ($message->getOriginalMessage()->getHeaders()->all() as $header) {
                 if ($header instanceof MetadataHeader) {
-                    $options['Tags'][] = ['Name' => $header->getKey(), 'Value' => $header->getValue()];
+                    $options['EmailTags'][] = ['Name' => $header->getKey(), 'Value' => $header->getValue()];
                 }
             }
         }
@@ -67,11 +68,11 @@ class SesV2Transport extends AbstractTransport implements Stringable
                     $options, [
                         'Source' => $message->getEnvelope()->getSender()->toString(),
                         'Destination' => [
-                            'ToAddresses' => collect($message->getEnvelope()->getRecipients())
-                                    ->map
-                                    ->toString()
-                                    ->values()
-                                    ->all(),
+                            'ToAddresses' => (new Collection($message->getEnvelope()->getRecipients()))
+                                ->map
+                                ->toString()
+                                ->values()
+                                ->all(),
                         ],
                         'Content' => [
                             'Raw' => [

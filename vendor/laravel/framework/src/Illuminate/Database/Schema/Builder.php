@@ -95,7 +95,7 @@ class Builder
      */
     public static function morphUsingUuids()
     {
-        return static::defaultMorphKeyType('uuid');
+        static::defaultMorphKeyType('uuid');
     }
 
     /**
@@ -105,7 +105,7 @@ class Builder
      */
     public static function morphUsingUlids()
     {
-        return static::defaultMorphKeyType('ulid');
+        static::defaultMorphKeyType('ulid');
     }
 
     /**
@@ -144,7 +144,7 @@ class Builder
     {
         $table = $this->connection->getTablePrefix().$table;
 
-        foreach ($this->getTables(false) as $value) {
+        foreach ($this->getTables() as $value) {
             if (strtolower($table) === strtolower($value['name'])) {
                 return true;
             }
@@ -293,7 +293,7 @@ class Builder
         $columns = $this->getColumns($table);
 
         foreach ($columns as $value) {
-            if (strtolower($value['name']) === $column) {
+            if (strtolower($value['name']) === strtolower($column)) {
                 return $fullDefinition ? $value['type'] : $value['type_name'];
             }
         }

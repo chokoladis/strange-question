@@ -1,5 +1,24 @@
 .index-page{
 
+    i{
+        stroke: white;
+    }
+
+    .popular-answer{
+        display: flex;
+        overflow: hidden;
+        margin-top: 15px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+
+        i{
+            transform: scale(1.2);
+            left: -20px;
+            top: 10px;
+            position: relative;
+        }
+    }
+
     .img-col{
         max-height: 200px;
 

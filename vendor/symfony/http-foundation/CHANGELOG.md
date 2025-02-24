@@ -1,6 +1,26 @@
 CHANGELOG
 =========
 
+7.2
+---
+
+ * Add optional `$requests` parameter to `RequestStack::__construct()`
+ * Add optional `$v4Bytes` and `$v6Bytes` parameters to `IpUtils::anonymize()`
+ * Add `PRIVATE_SUBNETS` as a shortcut for private IP address ranges to `Request::setTrustedProxies()`
+ * Deprecate passing `referer_check`, `use_only_cookies`, `use_trans_sid`, `trans_sid_hosts`, `trans_sid_tags`, `sid_bits_per_character` and `sid_length` options to `NativeSessionStorage`
+
+7.1
+---
+
+ * Add optional `$expirationParameter` argument to `UriSigner::__construct()`
+ * Add optional `$expiration` argument to `UriSigner::sign()`
+ * Rename `$parameter` argument of `UriSigner::__construct()` to `$hashParameter`
+ * Add `UploadedFile::getClientOriginalPath()`
+ * Add `QueryParameterRequestMatcher`
+ * Add `HeaderRequestMatcher`
+ * Add support for `\SplTempFileObject` in `BinaryFileResponse`
+ * Add `verbose` argument to response test constraints
+
 7.0
 ---
 

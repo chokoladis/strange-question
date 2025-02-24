@@ -1081,7 +1081,7 @@ trait Date
      *
      * @throws UnknownGetterException
      *
-     * @return string|int|bool|DateTimeZone|null
+     * @return string|int|bool|DateTimeZone
      */
     public function get(Unit|string $name): mixed
     {
@@ -1307,7 +1307,7 @@ trait Date
             // @property CarbonTimeZone $timezone the current timezone
             // @property CarbonTimeZone $tz alias of $timezone
             case $name === 'timezone' || $name === 'tz':
-                return CarbonTimeZone::instance($this->getTimezone());
+                return $this->getTimezone();
 
             // @property-read string $timezoneName the current timezone name
             // @property-read string $tzName alias of $timezoneName
@@ -1398,7 +1398,7 @@ trait Date
     public function set(Unit|array|string $name, DateTimeZone|Month|string|int|float|null $value = null): static
     {
         if ($this->isImmutable()) {
-            throw new ImmutableException(sprintf('%s class', static::class));
+            throw new ImmutableException(\sprintf('%s class', static::class));
         }
 
         if (\is_array($name)) {
@@ -1702,16 +1702,17 @@ trait Date
     public function setUnitNoOverflow(string $valueUnit, int $value, string $overflowUnit): static
     {
         try {
-            $original = $this->avoidMutation();
+            $start = $this->avoidMutation()->startOf($overflowUnit);
+            $end = $this->avoidMutation()->endOf($overflowUnit);
             /** @var static $date */
             $date = $this->$valueUnit($value);
-            $start = $original->avoidMutation()->startOf($overflowUnit);
-            $end = $original->avoidMutation()->endOf($overflowUnit);
 
             if ($date < $start) {
-                $date = $date->setDateTimeFrom($start);
-            } elseif ($date > $end) {
-                $date = $date->setDateTimeFrom($end);
+                return $date->mutateIfMutable($start);
+            }
+
+            if ($date > $end) {
+                return $date->mutateIfMutable($end);
             }
 
             return $date;
@@ -2056,15 +2057,15 @@ trait Date
             'DD' => ['rawFormat', ['d']],
             'Do' => ['ordinal', ['day', 'D']],
             'd' => 'dayOfWeek',
-            'dd' => function (CarbonInterface $date, $originalFormat = null) {
-                return $date->getTranslatedMinDayName($originalFormat);
-            },
-            'ddd' => function (CarbonInterface $date, $originalFormat = null) {
-                return $date->getTranslatedShortDayName($originalFormat);
-            },
-            'dddd' => function (CarbonInterface $date, $originalFormat = null) {
-                return $date->getTranslatedDayName($originalFormat);
-            },
+            'dd' => static fn (CarbonInterface $date, $originalFormat = null) => $date->getTranslatedMinDayName(
+                $originalFormat,
+            ),
+            'ddd' => static fn (CarbonInterface $date, $originalFormat = null) => $date->getTranslatedShortDayName(
+                $originalFormat,
+            ),
+            'dddd' => static fn (CarbonInterface $date, $originalFormat = null) => $date->getTranslatedDayName(
+                $originalFormat,
+            ),
             'DDD' => 'dayOfYear',
             'DDDD' => ['getPaddedUnit', ['dayOfYear', 3]],
             'DDDo' => ['ordinal', ['dayOfYear', 'DDD']],
@@ -2086,34 +2087,18 @@ trait Date
             'A' => 'upperMeridiem',
             's' => 'second',
             'ss' => ['getPaddedUnit', ['second']],
-            'S' => function (CarbonInterface $date) {
-                return (string) floor($date->micro / 100000);
-            },
-            'SS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro / 10000), 2, '0', STR_PAD_LEFT);
-            },
-            'SSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro / 1000), 3, '0', STR_PAD_LEFT);
-            },
-            'SSSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro / 100), 4, '0', STR_PAD_LEFT);
-            },
-            'SSSSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro / 10), 5, '0', STR_PAD_LEFT);
-            },
+            'S' => static fn (CarbonInterface $date) => (string) floor($date->micro / 100000),
+            'SS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro / 10000, 2),
+            'SSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro / 1000, 3),
+            'SSSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro / 100, 4),
+            'SSSSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro / 10, 5),
             'SSSSSS' => ['getPaddedUnit', ['micro', 6]],
-            'SSSSSSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro * 10), 7, '0', STR_PAD_LEFT);
-            },
-            'SSSSSSSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro * 100), 8, '0', STR_PAD_LEFT);
-            },
-            'SSSSSSSSS' => function (CarbonInterface $date) {
-                return str_pad((string) floor($date->micro * 1000), 9, '0', STR_PAD_LEFT);
-            },
+            'SSSSSSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro * 10, 7),
+            'SSSSSSSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro * 100, 8),
+            'SSSSSSSSS' => static fn (CarbonInterface $date) => self::floorZeroPad($date->micro * 1000, 9),
             'M' => 'month',
             'MM' => ['rawFormat', ['m']],
-            'MMM' => function (CarbonInterface $date, $originalFormat = null) {
+            'MMM' => static function (CarbonInterface $date, $originalFormat = null) {
                 $month = $date->getTranslatedShortMonthName($originalFormat);
                 $suffix = $date->getTranslationMessage('mmm_suffix');
                 if ($suffix && $month !== $date->monthName) {
@@ -2122,9 +2107,9 @@ trait Date
 
                 return $month;
             },
-            'MMMM' => function (CarbonInterface $date, $originalFormat = null) {
-                return $date->getTranslatedMonthName($originalFormat);
-            },
+            'MMMM' => static fn (CarbonInterface $date, $originalFormat = null) => $date->getTranslatedMonthName(
+                $originalFormat,
+            ),
             'Mo' => ['ordinal', ['month', 'M']],
             'Q' => 'quarter',
             'Qo' => ['ordinal', ['quarter', 'M']],
@@ -2150,9 +2135,8 @@ trait Date
             'YY' => ['rawFormat', ['y']],
             'YYYY' => ['getPaddedUnit', ['year', 4]],
             'YYYYY' => ['getPaddedUnit', ['year', 5]],
-            'YYYYYY' => function (CarbonInterface $date) {
-                return ($date->year < 0 ? '' : '+').$date->getPaddedUnit('year', 6);
-            },
+            'YYYYYY' => static fn (CarbonInterface $date) => ($date->year < 0 ? '' : '+').
+                $date->getPaddedUnit('year', 6),
             'z' => ['rawFormat', ['T']],
             'zz' => 'tzName',
             'Z' => ['getOffsetString', []],
@@ -2288,9 +2272,7 @@ trait Date
                 $code = $match[0];
                 $sequence = $formats[$code] ?? preg_replace_callback(
                     '/MMMM|MM|DD|dddd/',
-                    function ($code) {
-                        return mb_substr($code[0], 1);
-                    },
+                    static fn ($code) => mb_substr($code[0], 1),
                     $formats[strtoupper($code)] ?? '',
                 );
                 $rest = mb_substr($format, $i + mb_strlen($code));
@@ -2345,11 +2327,7 @@ trait Date
             'j' => true,
             'l' => 'dddd',
             'N' => true,
-            'S' => function ($date) {
-                $day = $date->rawFormat('j');
-
-                return str_replace((string) $day, '', $date->isoFormat('Do'));
-            },
+            'S' => static fn ($date) => str_replace((string) $date->rawFormat('j'), '', $date->isoFormat('Do')),
             'w' => true,
             'z' => true,
             'W' => true,
@@ -2477,8 +2455,8 @@ trait Date
         $second = $this->getOffset();
         $symbol = $second < 0 ? '-' : '+';
         $minute = abs($second) / static::SECONDS_PER_MINUTE;
-        $hour = str_pad((string) floor($minute / static::MINUTES_PER_HOUR), 2, '0', STR_PAD_LEFT);
-        $minute = str_pad((string) (((int) $minute) % static::MINUTES_PER_HOUR), 2, '0', STR_PAD_LEFT);
+        $hour = self::floorZeroPad($minute / static::MINUTES_PER_HOUR, 2);
+        $minute = self::floorZeroPad(((int) $minute) % static::MINUTES_PER_HOUR, 2);
 
         return "$symbol$hour$separator$minute";
     }
@@ -2503,7 +2481,7 @@ trait Date
             }
 
             if (static::isStrictModeEnabled()) {
-                throw new UnknownMethodException(sprintf('%s::%s', static::class, $method));
+                throw new UnknownMethodException(\sprintf('%s::%s', static::class, $method));
             }
 
             return null;
@@ -2607,158 +2585,16 @@ trait Date
      */
     public function __call(string $method, array $parameters): mixed
     {
-        $result = $this->callDiffAlias($method, $parameters)
-            ?? $this->callHumanDiffAlias($method, $parameters)
-            ?? $this->callRoundMethod($method, $parameters);
-
-        if ($result !== null) {
-            return $result;
-        }
-
         $unit = rtrim($method, 's');
 
-        if (str_starts_with($unit, 'is')) {
-            $word = substr($unit, 2);
-
-            if (\in_array($word, static::$days, true)) {
-                return $this->isDayOfWeek($word);
-            }
-
-            switch ($word) {
-                // @call is Check if the current instance has UTC timezone. (Both isUtc and isUTC cases are valid.)
-                case 'Utc':
-                case 'UTC':
-                    return $this->utc;
-                // @call is Check if the current instance has non-UTC timezone.
-                case 'Local':
-                    return $this->local;
-                // @call is Check if the current instance is a valid date.
-                case 'Valid':
-                    return $this->year !== 0;
-                // @call is Check if the current instance is in a daylight saving time.
-                case 'DST':
-                    return $this->dst;
-            }
-        }
-
-        $action = substr($unit, 0, 3);
-        $overflow = null;
-
-        if ($action === 'set') {
-            $unit = strtolower(substr($unit, 3));
-        }
-
-        if (\in_array($unit, static::$units, true)) {
-            return $this->setUnit($unit, ...$parameters);
-        }
-
-        if ($action === 'add' || $action === 'sub') {
-            $unit = substr($unit, 3);
-            $utcUnit = $this->getUTCUnit($unit);
-
-            if ($utcUnit) {
-                $unit = static::singularUnit($utcUnit);
-
-                return $this->{"{$action}RealUnit"}($unit, ...$parameters);
-            }
-
-            if (preg_match('/^(Month|Quarter|Year|Decade|Century|Centurie|Millennium|Millennia)s?(No|With|Without|WithNo)Overflow$/', $unit, $match)) {
-                $unit = $match[1];
-                $overflow = $match[2] === 'With';
-            }
-
-            $unit = static::singularUnit($unit);
-        }
-
-        if (static::isModifiableUnit($unit)) {
-            return $this->{"{$action}Unit"}($unit, $this->getMagicParameter($parameters, 0, 'value', 1), $overflow);
-        }
-
-        $sixFirstLetters = substr($unit, 0, 6);
-        $factor = -1;
-
-        if ($sixFirstLetters === 'isLast') {
-            $sixFirstLetters = 'isNext';
-            $factor = 1;
-        }
-
-        if ($sixFirstLetters === 'isNext') {
-            $lowerUnit = strtolower(substr($unit, 6));
-
-            if (static::isModifiableUnit($lowerUnit)) {
-                return $this->avoidMutation()->addUnit($lowerUnit, $factor, false)->isSameUnit($lowerUnit, ...($parameters ?: ['now']));
-            }
-        }
-
-        if ($sixFirstLetters === 'isSame') {
-            try {
-                return $this->isSameUnit(strtolower(substr($unit, 6)), ...$parameters);
-            } catch (BadComparisonUnitException) {
-                // Try next
-            }
-        }
-
-        if (str_starts_with($unit, 'isCurrent')) {
-            try {
-                return $this->isCurrentUnit(strtolower(substr($unit, 9)));
-            } catch (BadComparisonUnitException | BadMethodCallException) {
-                // Try next
-            }
-        }
-
-        if (str_ends_with($method, 'Until')) {
-            try {
-                $unit = static::singularUnit(substr($method, 0, -5));
-
-                return $this->range(
-                    $this->getMagicParameter($parameters, 0, 'endDate', $this),
-                    $this->getMagicParameter($parameters, 1, 'factor', 1),
-                    $unit
-                );
-            } catch (InvalidArgumentException) {
-                // Try macros
-            }
-        }
-
-        if (preg_match('/^([a-z]{2,})(In|Of)([A-Z][a-z]+)$/', $method, $match)) {
-            $value = null;
-            $localStrictModeEnabled = $this->localStrictModeEnabled;
-            $this->localStrictModeEnabled = true;
-
-            try {
-                $value = $this->callGetOrSet($method, $parameters[0] ?? null);
-            } catch (UnknownGetterException|UnknownSetterException|ImmutableException) {
-                // continue to macro
-            } finally {
-                $this->localStrictModeEnabled = $localStrictModeEnabled;
-            }
-
-            if ($value !== null) {
-                return $value;
-            }
-        }
-
-        return static::bindMacroContext($this, function () use (&$method, &$parameters) {
-            $macro = $this->getLocalMacro($method);
-
-            if (!$macro) {
-                foreach ($this->getAllGenericMacros() as $callback) {
-                    try {
-                        return $this->executeCallable($callback, $method, ...$parameters);
-                    } catch (BadMethodCallException) {
-                        continue;
-                    }
-                }
-
-                if ($this->isLocalStrictModeEnabled()) {
-                    throw new UnknownMethodException($method);
-                }
-
-                return null;
-            }
-
-            return $this->executeCallable($macro, ...$parameters);
-        });
+        return $this->callDiffAlias($unit, $parameters)
+            ?? $this->callHumanDiffAlias($unit, $parameters)
+            ?? $this->callRoundMethod($unit, $parameters)
+            ?? $this->callIsMethod($unit, $parameters)
+            ?? $this->callModifierMethod($unit, $parameters)
+            ?? $this->callPeriodMethod($method, $parameters)
+            ?? $this->callGetOrSetMethod($method, $parameters)
+            ?? $this->callMacroMethod($method, $parameters);
     }
 
     /**
@@ -2776,24 +2612,6 @@ trait Date
         }
 
         return $date instanceof self ? $date : $this->transmitFactory(static fn () => static::instance($date));
-    }
-
-    /**
-     * Return the Carbon instance passed through, a now instance in UTC
-     * if null given or parse the input if string given (using current timezone
-     * then switching to UTC).
-     */
-    protected function resolveUTC(DateTimeInterface|string|null $date = null): self
-    {
-        if (!$date) {
-            return $this->transmitFactory(static fn () => static::now('UTC'));
-        }
-
-        if (\is_string($date)) {
-            return $this->transmitFactory(fn () => static::parse($date, $this->getTimezone())->utc());
-        }
-
-        return $date instanceof self ? $date : $this->transmitFactory(static fn () => static::instance($date))->utc();
     }
 
     protected static function weekRotate(int $day, int $rotation): int
@@ -2865,6 +2683,24 @@ trait Date
         }
 
         return $this->getTranslationMessage("$key.$subKey", null, $defaultValue);
+    }
+
+    private function callGetOrSetMethod(string $method, array $parameters): mixed
+    {
+        if (preg_match('/^([a-z]{2,})(In|Of)([A-Z][a-z]+)$/', $method)) {
+            $localStrictModeEnabled = $this->localStrictModeEnabled;
+            $this->localStrictModeEnabled = true;
+
+            try {
+                return $this->callGetOrSet($method, $parameters[0] ?? null);
+            } catch (UnknownGetterException|UnknownSetterException|ImmutableException) {
+                // continue to macro
+            } finally {
+                $this->localStrictModeEnabled = $localStrictModeEnabled;
+            }
+        }
+
+        return null;
     }
 
     private function callGetOrSet(string $name, mixed $value): mixed
@@ -2952,7 +2788,7 @@ trait Date
         $sizePattern = implode('|', array_keys($diffSizes));
         $syntaxPattern = implode('|', array_keys($diffSyntaxModes));
 
-        if (preg_match("/^(?<size>$sizePattern)(?<syntax>$syntaxPattern)DiffForHumans$/", $method, $match)) {
+        if (preg_match("/^(?<size>$sizePattern)(?<syntax>$syntaxPattern)DiffForHuman$/", $method, $match)) {
             $dates = array_filter($parameters, function ($parameter) {
                 return $parameter instanceof DateTimeInterface;
             });
@@ -2968,5 +2804,168 @@ trait Date
         }
 
         return null;
+    }
+
+    private function callIsMethod(string $unit, array $parameters): ?bool
+    {
+        if (!str_starts_with($unit, 'is')) {
+            return null;
+        }
+
+        $word = substr($unit, 2);
+
+        if (\in_array($word, static::$days, true)) {
+            return $this->isDayOfWeek($word);
+        }
+
+        return match ($word) {
+            // @call is Check if the current instance has UTC timezone. (Both isUtc and isUTC cases are valid.)
+            'Utc', 'UTC' => $this->utc,
+            // @call is Check if the current instance has non-UTC timezone.
+            'Local' => $this->local,
+            // @call is Check if the current instance is a valid date.
+            'Valid' => $this->year !== 0,
+            // @call is Check if the current instance is in a daylight saving time.
+            'DST' => $this->dst,
+            default => $this->callComparatorMethod($word, $parameters),
+        };
+    }
+
+    private function callComparatorMethod(string $unit, array $parameters): ?bool
+    {
+        $start = substr($unit, 0, 4);
+        $factor = -1;
+
+        if ($start === 'Last') {
+            $start = 'Next';
+            $factor = 1;
+        }
+
+        if ($start === 'Next') {
+            $lowerUnit = strtolower(substr($unit, 4));
+
+            if (static::isModifiableUnit($lowerUnit)) {
+                return $this->avoidMutation()->addUnit($lowerUnit, $factor, false)->isSameUnit($lowerUnit, ...($parameters ?: ['now']));
+            }
+        }
+
+        if ($start === 'Same') {
+            try {
+                return $this->isSameUnit(strtolower(substr($unit, 4)), ...$parameters);
+            } catch (BadComparisonUnitException) {
+                // Try next
+            }
+        }
+
+        if (str_starts_with($unit, 'Current')) {
+            try {
+                return $this->isCurrentUnit(strtolower(substr($unit, 7)));
+            } catch (BadComparisonUnitException | BadMethodCallException) {
+                // Try next
+            }
+        }
+
+        return null;
+    }
+
+    private function callModifierMethod(string $unit, array $parameters): ?static
+    {
+        $action = substr($unit, 0, 3);
+        $overflow = null;
+
+        if ($action === 'set') {
+            $unit = strtolower(substr($unit, 3));
+        }
+
+        if (\in_array($unit, static::$units, true)) {
+            return $this->setUnit($unit, ...$parameters);
+        }
+
+        if ($action === 'add' || $action === 'sub') {
+            $unit = substr($unit, 3);
+            $utcUnit = $this->getUTCUnit($unit);
+
+            if ($utcUnit) {
+                $unit = static::singularUnit($utcUnit);
+
+                return $this->{"{$action}UTCUnit"}($unit, ...$parameters);
+            }
+
+            if (preg_match('/^(Month|Quarter|Year|Decade|Century|Centurie|Millennium|Millennia)s?(No|With|Without|WithNo)Overflow$/', $unit, $match)) {
+                $unit = $match[1];
+                $overflow = $match[2] === 'With';
+            }
+
+            $unit = static::singularUnit($unit);
+        }
+
+        if (static::isModifiableUnit($unit)) {
+            return $this->{"{$action}Unit"}($unit, $this->getMagicParameter($parameters, 0, 'value', 1), $overflow);
+        }
+
+        return null;
+    }
+
+    private function callPeriodMethod(string $method, array $parameters): ?CarbonPeriod
+    {
+        if (str_ends_with($method, 'Until')) {
+            try {
+                $unit = static::singularUnit(substr($method, 0, -5));
+
+                return $this->range(
+                    $this->getMagicParameter($parameters, 0, 'endDate', $this),
+                    $this->getMagicParameter($parameters, 1, 'factor', 1),
+                    $unit
+                );
+            } catch (InvalidArgumentException) {
+                // Try macros
+            }
+        }
+
+        return null;
+    }
+
+    private function callMacroMethod(string $method, array $parameters): mixed
+    {
+        return static::bindMacroContext($this, function () use (&$method, &$parameters) {
+            $macro = $this->getLocalMacro($method);
+
+            if (!$macro) {
+                foreach ($this->getAllGenericMacros() as $callback) {
+                    try {
+                        return $this->executeCallable($callback, $method, ...$parameters);
+                    } catch (BadMethodCallException) {
+                        continue;
+                    }
+                }
+
+                if ($this->isLocalStrictModeEnabled()) {
+                    throw new UnknownMethodException($method);
+                }
+
+                return null;
+            }
+
+            return $this->executeCallable($macro, ...$parameters);
+        });
+    }
+
+    private static function floorZeroPad(int|float $value, int $length): string
+    {
+        return str_pad((string) floor($value), $length, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * @template T of CarbonInterface
+     *
+     * @param T $date
+     *
+     * @return T
+     */
+    private function mutateIfMutable(CarbonInterface $date): CarbonInterface
+    {
+        return $this instanceof DateTimeImmutable
+            ? $date
+            : $this->modify('@'.$date->rawFormat('U.u'))->setTimezone($date->getTimezone());
     }
 }

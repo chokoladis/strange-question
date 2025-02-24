@@ -41,6 +41,7 @@ use InvalidArgumentException;
 use ReflectionException;
 use ReturnTypeWillChange;
 use RuntimeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
 /**
@@ -288,6 +289,16 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
      */
     protected ?CarbonInterface $endDate = null;
 
+    /**
+     * End date if interval was created from a difference between 2 dates.
+     */
+    protected ?DateInterval $rawInterval = null;
+
+    /**
+     * Flag if the interval was made from a diff with absolute flag on.
+     */
+    protected bool $absolute = false;
+
     protected ?array $initialValues = null;
 
     /**
@@ -302,12 +313,14 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
             $this->startDate = $this->startDate
                 ->avoidMutation()
                 ->setTimezone($timezone);
+            $this->rawInterval = null;
         }
 
         if ($this->endDate) {
             $this->endDate = $this->endDate
                 ->avoidMutation()
                 ->setTimezone($timezone);
+            $this->rawInterval = null;
         }
 
         return $this;
@@ -325,12 +338,14 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
             $this->startDate = $this->startDate
                 ->avoidMutation()
                 ->shiftTimezone($timezone);
+            $this->rawInterval = null;
         }
 
         if ($this->endDate) {
             $this->endDate = $this->endDate
                 ->avoidMutation()
                 ->shiftTimezone($timezone);
+            $this->rawInterval = null;
         }
 
         return $this;
@@ -482,6 +497,11 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     $this->assertSafeForInteger('minute', $minutes);
                     $seconds = (float) ($match['second'] ?? 0);
                     $this->assertSafeForInteger('second', $seconds);
+                    $microseconds = (int) str_pad(
+                        substr(explode('.', $match['second'] ?? '0.0')[1] ?? '0', 0, 6),
+                        6,
+                        '0',
+                    );
                 }
 
                 $totalDays = (($weeks * static::getDaysPerWeek()) + $days);
@@ -493,6 +513,10 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                 $this->h = (int) $hours;
                 $this->i = (int) $minutes;
                 $this->s = (int) $seconds;
+                $secondFloatPart = (float) ($microseconds / CarbonInterface::MICROSECONDS_PER_SECOND);
+                $this->f = $secondFloatPart;
+                $intervalMicroseconds = (int) ($this->f * CarbonInterface::MICROSECONDS_PER_SECOND);
+                $intervalSeconds = $seconds - $secondFloatPart;
 
                 if (
                     ((float) $this->y) !== $years ||
@@ -500,7 +524,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     ((float) $this->d) !== $totalDays ||
                     ((float) $this->h) !== $hours ||
                     ((float) $this->i) !== $minutes ||
-                    ((float) $this->s) !== $seconds
+                    ((float) $this->s) !== $intervalSeconds ||
+                    $intervalMicroseconds !== ((int) $microseconds)
                 ) {
                     $this->add(static::fromString(
                         ($years - $this->y).' years '.
@@ -508,7 +533,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                         ($totalDays - $this->d).' days '.
                         ($hours - $this->h).' hours '.
                         ($minutes - $this->i).' minutes '.
-                        ($seconds - $this->s).' seconds '
+                        ($intervalSeconds - $this->s).' seconds '.
+                        ($microseconds - $intervalMicroseconds).' microseconds ',
                     ));
                 }
             } catch (Throwable $secondException) {
@@ -517,7 +543,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         }
 
         if ($microseconds !== null) {
-            $this->f = $microseconds / Carbon::MICROSECONDS_PER_SECOND;
+            $this->f = $microseconds / CarbonInterface::MICROSECONDS_PER_SECOND;
         }
 
         foreach (['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'] as $unit) {
@@ -780,6 +806,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $this->originalInput = null;
         $this->startDate = null;
         $this->endDate = null;
+        $this->rawInterval = null;
+        $this->absolute = false;
 
         return $this;
     }
@@ -1054,7 +1082,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
                 default:
                     throw new InvalidIntervalException(
-                        sprintf('Invalid part %s in definition %s', $part, $intervalDefinition),
+                        \sprintf('Invalid part %s in definition %s', $part, $intervalDefinition),
                     );
             }
         }
@@ -1090,8 +1118,11 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
     {
         $start = $start instanceof CarbonInterface ? $start : Carbon::make($start);
         $end = $end instanceof CarbonInterface ? $end : Carbon::make($end);
-        $interval = static::instance($start->diffAsDateInterval($end, $absolute), $skip);
+        $rawInterval = $start->diffAsDateInterval($end, $absolute);
+        $interval = static::instance($rawInterval, $skip);
 
+        $interval->absolute = $absolute;
+        $interval->rawInterval = $rawInterval;
         $interval->startDate = $start;
         $interval->endDate = $end;
         $interval->initialValues = $interval->getInnerValues();
@@ -1359,6 +1390,10 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     break;
 
                 case 'day':
+                    if ($value === false) {
+                        break;
+                    }
+
                     $this->checkIntegerValue($key, $value);
                     $this->d = $value;
                     $this->handleDecimalPart('day', $value, $this->d);
@@ -1409,6 +1444,10 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     break;
 
                 default:
+                    if (str_starts_with($key, ' * ')) {
+                        return $this->setSetting(substr($key, 3), $value);
+                    }
+
                     if ($this->localStrictModeEnabled ?? Carbon::isStrictModeEnabled()) {
                         throw new UnknownSetterException($key);
                     }
@@ -1705,7 +1744,9 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
             ':optional-space' => $optionalSpace,
         ];
 
-        return [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers, $interpolations, $minimumUnit, $skip];
+        $translator ??= isset($locale) ? Translator::get($locale) : null;
+
+        return [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers, $interpolations, $minimumUnit, $skip, $translator];
     }
 
     protected static function getRoundingMethodFromOptions(int $options): ?string
@@ -1804,25 +1845,30 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
      * echo CarbonInterval::fromString('1d 24h')->forHumans(['minimumUnit' => 'hour']) . "\n";
      * ```
      *
-     * @param int|array $syntax  if array passed, parameters will be extracted from it, the array may contains:
-     *                           - 'syntax' entry (see below)
-     *                           - 'short' entry (see below)
-     *                           - 'parts' entry (see below)
-     *                           - 'options' entry (see below)
-     *                           - 'skip' entry, list of units to skip (array of strings or a single string,
+     * @param int|array $syntax  if array passed, parameters will be extracted from it, the array may contain:
+     *                           ⦿ 'syntax' entry (see below)
+     *                           ⦿ 'short' entry (see below)
+     *                           ⦿ 'parts' entry (see below)
+     *                           ⦿ 'options' entry (see below)
+     *                           ⦿ 'skip' entry, list of units to skip (array of strings or a single string,
      *                           ` it can be the unit name (singular or plural) or its shortcut
      *                           ` (y, m, w, d, h, min, s, ms, µs).
-     *                           - 'aUnit' entry, prefer "an hour" over "1 hour" if true
-     *                           - 'join' entry determines how to join multiple parts of the string
+     *                           ⦿ 'aUnit' entry, prefer "an hour" over "1 hour" if true
+     *                           ⦿ 'altNumbers' entry, use alternative numbers if available
+     *                           ` (from the current language if true is passed, from the given language(s)
+     *                           ` if array or string is passed)
+     *                           ⦿ 'join' entry determines how to join multiple parts of the string
      *                           `  - if $join is a string, it's used as a joiner glue
      *                           `  - if $join is a callable/closure, it get the list of string and should return a string
      *                           `  - if $join is an array, the first item will be the default glue, and the second item
      *                           `    will be used instead of the glue for the last item
      *                           `  - if $join is true, it will be guessed from the locale ('list' translation file entry)
      *                           `  - if $join is missing, a space will be used as glue
-     *                           - 'minimumUnit' entry determines the smallest unit of time to display can be long or
+     *                           ⦿ 'minimumUnit' entry determines the smallest unit of time to display can be long or
      *                           `  short form of the units, e.g. 'hour' or 'h' (default value: s)
-     *                           if int passed, it add modifiers:
+     *                           ⦿ 'locale' language in which the diff should be output (has no effect if 'translator' key is set)
+     *                           ⦿ 'translator' a custom translator to use to translator the output.
+     *                           if int passed, it adds modifiers:
      *                           Possible values:
      *                           - CarbonInterface::DIFF_ABSOLUTE          no modifiers
      *                           - CarbonInterface::DIFF_RELATIVE_TO_NOW   add ago/from now modifier
@@ -1838,7 +1884,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
      */
     public function forHumans($syntax = null, $short = false, $parts = self::NO_LIMIT, $options = null): string
     {
-        [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers, $interpolations, $minimumUnit, $skip] = $this
+        /* @var TranslatorInterface|null $translator */
+        [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers, $interpolations, $minimumUnit, $skip, $translator] = $this
             ->getForHumansParameters($syntax, $short, $parts, $options);
 
         $interval = [];
@@ -1852,8 +1899,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $transId = $relativeToNow ? ($isFuture ? 'from_now' : 'ago') : ($isFuture ? 'after' : 'before');
         $declensionMode = null;
 
-        /** @var Translator $translator */
-        $translator = $this->getLocalTranslator();
+        $translator ??= $this->getLocalTranslator();
 
         $handleDeclensions = function ($unit, $count, $index = 0, $parts = 1) use ($interpolations, $transId, $translator, $altNumbers, $absolute, &$declensionMode) {
             if (!$absolute) {
@@ -2035,6 +2081,19 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $time = [':time' => $time];
 
         return $this->translate($transId, array_merge($time, $interpolations, $time), null, $translator);
+    }
+
+    public function format(string $format): string
+    {
+        $output = parent::format($format);
+
+        if (!str_contains($format, '%a') || !isset($this->startDate, $this->endDate)) {
+            return $output;
+        }
+
+        $this->rawInterval ??= $this->startDate->diffAsDateInterval($this->endDate);
+
+        return str_replace('(unknown)', $this->rawInterval->format('%a'), $output);
     }
 
     /**
@@ -2432,7 +2491,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
         $seconds = abs($interval->s);
         if ($microseconds && $interval->f > 0) {
-            $seconds = sprintf('%d.%06d', $seconds, abs($interval->f) * 1000000);
+            $seconds = \sprintf('%d.%06d', $seconds, abs($interval->f) * 1000000);
         }
 
         $time = array_filter([
@@ -2550,7 +2609,9 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $this->checkStartAndEnd();
 
         if ($this->startDate && $this->endDate) {
-            return $this->startDate->diffInUnit($unit, $this->endDate);
+            $diff = $this->startDate->diffInUnit($unit, $this->endDate);
+
+            return $this->absolute ? abs($diff) : $diff;
         }
 
         $result = 0;
@@ -3004,6 +3065,40 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         return $this->round($precision, 'ceil');
     }
 
+    public function __unserialize(array $data): void
+    {
+        $properties = array_combine(
+            array_map(
+                static fn (mixed $key) => \is_string($key)
+                    ? str_replace('tzName', 'timezoneSetting', $key)
+                    : $key,
+                array_keys($data),
+            ),
+            $data,
+        );
+
+        if (method_exists(parent::class, '__unserialize')) {
+            // PHP >= 8.2
+            parent::__unserialize($properties);
+
+            return;
+        }
+
+        // PHP <= 8.1
+        // @codeCoverageIgnoreStart
+        foreach ($properties as $property => $value) {
+            $name = preg_replace('/^\0.+\0/', '', $property);
+            $localStrictMode = $this->localStrictModeEnabled;
+            $this->localStrictModeEnabled = false;
+            $this->$name = $value;
+
+            if ($name !== 'localStrictModeEnabled') {
+                $this->localStrictModeEnabled = $localStrictMode;
+            }
+        }
+        // @codeCoverageIgnoreEnd
+    }
+
     /**
      * @template T
      *
@@ -3262,8 +3357,46 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
             && ($this->startDate !== null || $this->endDate !== null)
             && $this->initialValues !== $this->getInnerValues()
         ) {
+            $this->absolute = false;
             $this->startDate = null;
             $this->endDate = null;
+            $this->rawInterval = null;
+        }
+    }
+
+    /** @return $this */
+    private function setSetting(string $setting, mixed $value): self
+    {
+        switch ($setting) {
+            case 'timezoneSetting':
+                return $value === null ? $this : $this->setTimezone($value);
+
+            case 'step':
+                $this->setStep($value);
+
+                return $this;
+
+            case 'localMonthsOverflow':
+                return $value === null ? $this : $this->settings(['monthOverflow' => $value]);
+
+            case 'localYearsOverflow':
+                return $value === null ? $this : $this->settings(['yearOverflow' => $value]);
+
+            case 'localStrictModeEnabled':
+            case 'localHumanDiffOptions':
+            case 'localToStringFormat':
+            case 'localSerializer':
+            case 'localMacros':
+            case 'localGenericMacros':
+            case 'localFormatFunction':
+            case 'localTranslator':
+                $this->$setting = $value;
+
+                return $this;
+
+            default:
+                // Drop unknown settings
+                return $this;
         }
     }
 }
